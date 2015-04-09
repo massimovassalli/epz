@@ -36,18 +36,16 @@ import numpy as np
 class MySignal(epz.HWsignal):
     def acquire(self):
         import numpy.random as npr
-        i=0
-        while self.goahead:
-            if self.on:
-                i += 1
-                n = npr.random()
-                signal = self.device.hw['gain'].value * np.sin(2*np.pi*i/100.0)+n
-                self.queue.put(signal)
-                time.sleep(0.01)
+        t = time.clock()
+        n = npr.random()
+        signal = self.device.hw['gain'].value * np.sin(2*np.pi*t/1.0)+n
+        return signal
 
 dev.append(MySignal('sin'))
 print ("device configured and ready to interact")
+
 time.sleep(2)
+
 
 
 # play with the device from a consumer
@@ -74,7 +72,9 @@ curve = grafo.plot(np.linspace(0,2*np.pi,len(data)),data, title="Simplest possib
 grafo.enableAutoRange('x', False)
 
 sig = epz.Signal('TEST','sin')
+sig.setType(1)
 sig.start()
+sig.query()
 
 def plotUpdate():
     hm = sig.queue.qsize()
@@ -94,10 +94,20 @@ p = epz.Parameter('TEST','gain')
 p.start()
 p.query()
 
+q = 0
 def changeThings():
-    n = 10.0*np.random.random()
-    print("New wanted gain {0}\n".format(n))
-    p.value = n
+    global q
+    q += 1
+    if q % 3 == 0:
+        print("Switching")
+        if sig.value == -1:
+            sig.value = 1
+        else:
+            sig.value = -1
+    else:
+        n = 10.0*np.random.random()
+        print("New wanted gain {0}".format(n))
+        p.value = n
 
 action = QtCore.QTimer()
 action.timeout.connect(changeThings)

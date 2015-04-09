@@ -32,14 +32,21 @@ class Consumer(threading.Thread):
         self.fwserver = EPSERVER
         self.subport = SUBPORT
         self.pubport = PUBPORT
+        self.goahead = True
         self._val = None
+        self.setType(1.0)
         self.daemon = True
         self.queue = queue.Queue()
+
+    def setType(self,tp):
+        self.type = type(tp)
+        if type(tp)==type(12):
+            self.type = lambda x: int(float(x))
 
     def start(self):
         self.pubsocket.connect("tcp://{0}:{1}".format(self.fwserver, self.pubport))
         self.subsocket.connect("tcp://{0}:{1}".format(self.fwserver, self.subport))
-        self.subsocket.setsockopt_string(zmq.SUBSCRIBE, "{0}:{1}".format(self.devicename, self.parname))
+        self.subsocket.setsockopt_string(zmq.SUBSCRIBE, "{0}:{1}:".format(self.devicename, self.parname))
         return super(Consumer, self).start()
 
     def get_val(self):
@@ -57,16 +64,16 @@ class Consumer(threading.Thread):
 
 class Parameter(Consumer):
     def run(self):
-        while True:
+        while self.goahead:
             body = self.subsocket.recv_string()
             dev, par, val = body.split(':')
             if val != '*':
-                self._val = val
+                self._val = self.type(val)
 
 
 class EnQueuer(Consumer):
     def run(self):
-        while True:
+        while self.goahead:
             body = self.subsocket.recv_string()
             dev, par, val = body.split(':')
             if val != '*':
@@ -108,23 +115,20 @@ class Producer(threading.Thread):
     def __init__(self,hwname,value=None):
         self.hwname = hwname
         self.device = None
-        self.goahead = True
-        self.signal = False
+        self.goahead = False
         self.qlen = 0
         self.on = True
-        if value is not None:
-            self.value = value
-            if type(value)==type(12):
-                self.type = lambda x: int(float(x))
-            else:
-                self.type = type(value)
-        else:
+        self.tsleep = 0.001
+        if value is None:
+            value = 1
+        self.value = value
+        if type(value)==type(12):
             self.type = lambda x: int(float(x))
+        else:
+            self.type = type(value)
         return super(Producer, self).__init__()
 
     def update(self,v):
-        if self.signal:
-            return True
         if v > 100.0: # wrong range
             return False
         return True
@@ -136,24 +140,31 @@ class Producer(threading.Thread):
             return "{0}:{1}:{2}".format(self.device.devname, self.hwname, val)
 
     def subscribe(self,socket):
-        socket.setsockopt_string(zmq.SUBSCRIBE,"{0}:{1}".format(self.device.devname,self.hwname))
+        socket.setsockopt_string(zmq.SUBSCRIBE,"{0}:{1}:".format(self.device.devname,self.hwname))
+
+    def acquisition(self):
+        while self.goahead:
+            if self.on:
+                self.queue.put(self.acquire())
+                time.sleep(self.tsleep)
 
     def start(self,socket):
         self.subscribe(socket)
+        self.goahead = True
 
         self.queue = queue.Queue(self.qlen)
         self.pubsocket = CONTEXT.socket(zmq.PUB)
         self.pubsocket.connect("tcp://{0}:{1}".format(self.device.fwserver, self.device.pubport))
-        acq = threading.Thread(target=self.acquire)
+        acq = threading.Thread(target=self.acquisition)
         acq.start()
         return super(Producer, self).start()
 
     def run(self):
         while self.goahead:
-            val = self.queue.get()
-            message = self.getMessage(val)
-            self.pubsocket.send_string( message )
-
+            if self.on:
+                val = self.queue.get()
+                message = "{0}:{1}:{2}".format(self.device.devname, self.hwname + "_data", val)
+                self.pubsocket.send_string (message)
 
 class HWparameter(Producer):
     def start(self,socket):
@@ -175,18 +186,8 @@ class HWsignal(Producer):
 
     def acquire(self):
         import numpy.random as npr
-        while self.goahead:
-            if self.on:
-                n = npr.random()
-                self.queue.put(n)
-                time.sleep(1.0)
-
-    def run(self):
-        while self.goahead:
-            if self.on:
-                val = self.queue.get()
-                message = "{0}:{1}:{2}".format(self.device.devname, self.hwname + "_data", val)
-                self.pubsocket.send_string (message)
+        n = npr.random()
+        return n
 
 
 class Device(threading.Thread):
@@ -206,7 +207,7 @@ class Device(threading.Thread):
         self.pubsocket.connect("tcp://{0}:{1}".format(self.fwserver,self.pubport))
         self.subsocket.connect("tcp://{0}:{1}".format(self.fwserver,self.subport))
 
-        self.subsocket.setsockopt_string(zmq.SUBSCRIBE,"{0}:{1}".format(self.devname,'KILL'))
+        self.subsocket.setsockopt_string(zmq.SUBSCRIBE,"{0}:{1}:".format(self.devname,'KILL'))
 
     def shutdown(self):
         for p in self.hw:
@@ -230,7 +231,7 @@ class Device(threading.Thread):
                         execupdate = p.update(valtogive) 
                         if execupdate:
                             p.value=valtogive
-                            if valtogive != val:
+                            if str(valtogive) != val:
                                 message = p.getmessage()
                                 self.pubsocket.send_string( message )
                         else:
