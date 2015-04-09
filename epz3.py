@@ -111,17 +111,21 @@ class Producer(threading.Thread):
         self.goahead = True
         self.signal = False
         self.qlen = 0
+        self.on = True
         if value is not None:
             self.value = value
             if type(value)==type(12):
                 self.type = lambda x: int(float(x))
             else:
                 self.type = type(value)
+        else:
+            self.type = lambda x: int(float(x))
+        return super(Producer, self).__init__()
 
     def update(self,v):
         if self.signal:
             return True
-        if v > 100.0: #wrong range
+        if v > 100.0: # wrong range
             return False
         return True
 
@@ -134,13 +138,15 @@ class Producer(threading.Thread):
     def subscribe(self,socket):
         socket.setsockopt_string(zmq.SUBSCRIBE,"{0}:{1}".format(self.device.devname,self.hwname))
 
-    def start(self):
+    def start(self,socket):
+        self.subscribe(socket)
+
         self.queue = queue.Queue(self.qlen)
         self.pubsocket = CONTEXT.socket(zmq.PUB)
         self.pubsocket.connect("tcp://{0}:{1}".format(self.device.fwserver, self.device.pubport))
         acq = threading.Thread(target=self.acquire)
         acq.start()
-        return super(Hardware, self).start()
+        return super(Producer, self).start()
 
     def run(self):
         while self.goahead:
@@ -160,21 +166,11 @@ class HWparameter(Producer):
 
 
 class HWsignal(Producer):
-    def start(self,socket):
-        self.subscribe(socket)
-
-        self.queue = queue.Queue(self.qlen)
-        self.pubsocket = CONTEXT.socket(zmq.PUB)
-        self.pubsocket.connect("tcp://{0}:{1}".format(self.device.fwserver, self.device.pubport))
-        acq = threading.Thread(target=self.acquire)
-        acq.start()
-        return super(HWsignal, self).start()
-
     def update(self,v):
-        if v == 1:
-            self.on = True
-        else:
+        if v == -1:
             self.on = False
+        else:
+            self.on = True
         return True
 
     def acquire(self):
@@ -220,7 +216,7 @@ class Device(threading.Thread):
     def append(self,p):
         p.device = self
         p.start(self.subsocket)
-        self.hw[p.hwname]=p
+        self.hw[p.hwname] = p
 
     def run(self):
         while self.goahead:
