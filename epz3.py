@@ -118,7 +118,9 @@ class Producer(threading.Thread):
         self.goahead = False
         self.qlen = 0
         self.on = True
-        self.tsleep = 0.001
+        self.sent=0
+        self.tsleep = 0.0001
+        self.decimation = 1
         if value is None:
             value = 1
         self.value = value
@@ -146,12 +148,12 @@ class Producer(threading.Thread):
         while self.goahead:
             if self.on:
                 self.queue.put(self.acquire())
-                time.sleep(self.tsleep)
+                self.sent+=1
+            time.sleep(self.tsleep)
 
     def start(self,socket):
         self.subscribe(socket)
         self.goahead = True
-
         self.queue = queue.Queue(self.qlen)
         self.pubsocket = CONTEXT.socket(zmq.PUB)
         self.pubsocket.connect("tcp://{0}:{1}".format(self.device.fwserver, self.device.pubport))
@@ -163,21 +165,26 @@ class Producer(threading.Thread):
         while self.goahead:
             if self.on:
                 val = self.queue.get()
-                message = "{0}:{1}:{2}".format(self.device.devname, self.hwname + "_data", val)
-                self.pubsocket.send_string (message)
+                if ( self.sent % self.decimation) == 0:
+                    message = "{0}:{1}:{2}".format(self.device.devname, self.hwname + "_data", val)
+                    self.pubsocket.send_string (message)
 
 class HWparameter(Producer):
     def start(self,socket):
         self.subscribe(socket)
 
     def update(self,v):
-        if v > 100.0: #wrong range
-            return False
+        # Put here any control of v and return False to avoid setting the value
         return True
 
 
 class HWsignal(Producer):
     def update(self,v):
+        try:
+            self.decimation = int(v)
+        except ValueError:
+            self.decimation = 1
+
         if v == -1:
             self.on = False
         else:
@@ -202,7 +209,7 @@ class Device(threading.Thread):
         self.hw = {}
         self.debug = True
         self.daemon = True        
-        self.tsleep=0.1
+        self.tsleep=0.0001
         self.goahead = True
         self.pubsocket.connect("tcp://{0}:{1}".format(self.fwserver,self.pubport))
         self.subsocket.connect("tcp://{0}:{1}".format(self.fwserver,self.subport))
