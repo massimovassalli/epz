@@ -128,7 +128,11 @@ class Producer(threading.Thread):
             self.type = lambda x: int(float(x))
         else:
             self.type = type(value)
+        self.init()
         return super(Producer, self).__init__()
+
+    def init(self):
+        return
 
     def update(self,v):
         if v > 100.0: # wrong range
