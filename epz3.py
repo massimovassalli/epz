@@ -37,6 +37,7 @@ class Consumer(threading.Thread):
         self.setType(1.0)
         self.daemon = True
         self.queue = queue.Queue()
+        self.tracks = 1
 
     def setType(self,tp):
         self.type = type(tp)
@@ -77,7 +78,12 @@ class EnQueuer(Consumer):
             body = self.subsocket.recv_string()
             dev, par, val = body.split(':')
             if val != '*':
-                val = float(val)
+                if self.tracks == 1:
+                    val = float(val)
+                else:
+                    val = val.split(';')
+                    for i in range(len(val)):
+                        val[i]=float(val[i])
                 self.queue.put(val)
 
 
@@ -121,6 +127,7 @@ class Producer(threading.Thread):
         self.sent=0
         self.tsleep = 0.0001
         self.decimation = 1
+        self.tracks = 1
         if value is None:
             value = 1
         self.value = value
@@ -170,6 +177,13 @@ class Producer(threading.Thread):
             if self.on:
                 val = self.queue.get()
                 if ( self.sent % self.decimation) == 0:
+                    if self.tracks > 1:
+                        vx = ''
+                        pre = ''
+                        for i in range(len(val)):
+                            vx = vx + pre + str(val[i])
+                            pre=';'
+                        val = vx
                     message = "{0}:{1}:{2}".format(self.device.devname, self.hwname + "_data", val)
                     self.pubsocket.send_string (message)
 
