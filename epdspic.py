@@ -66,7 +66,7 @@ class data:
 
         rbuf=b'00'
         bcm2835_spi_transfernb(b'0',rbuf,2)
-        return int(binascii.hexlify(rbuf),16)   # ^ 0x8000
+        return int(binascii.hexlify(rbuf),16) # ^ 0x8000
 
     def read(self):
         vbin = self.transfer16()
@@ -92,21 +92,7 @@ class command(object):
 
         self.ser = ser
 
-    def write(self,cmd):
-        self.ser.open()
-        self.ser.flushInput()   #flush input buffer, discarding all its contents
-        self.ser.flushOutput()  #flush output buffer, aborting current output 
-                                #and discard all that is in buffer
-        #write data    
-        self.ser.write(cmd)
-        self.ser.close()
-
-class DACdev(command):
-    def __init__(self):
-        super(self.__class__, self).__init__()
-        self.polarity = DACBIPOLAR
-        self.setPolarity(self.polarity) #Set polarity also sets the value of the DAC to 0V
-        self.value=0.0
+        self.cmdchar = 'D'
 
     def vtoAD5871(self,v):
         """
@@ -120,6 +106,33 @@ class DACdev(command):
 
         return nA,nB,nC
 
+    def write(self,cmd):
+        self.ser.open()
+        self.ser.flushInput()   #flush input buffer, discarding all its contents
+        self.ser.flushOutput()  #flush output buffer, aborting current output 
+                                #and discard all that is in buffer
+        #write data    
+        self.ser.write(cmd.encode())
+        self.ser.close()
+
+    def setValue(self,v):
+        self.write(self.cmdchar)
+        coms = self.vtoAD5871(v)
+        for com in coms:
+            self.write(chr(com))
+
+
+class ADCdev(data):
+    pass
+
+
+class DACdev(command):
+    def __init__(self):
+        super(self.__class__, self).__init__()
+        self.polarity = DACBIPOLAR
+        self.setPolarity(self.polarity) #Set polarity also sets the value of the DAC to 0V
+        self.value=0.0
+
     def setToZero(self):
         self.write('Z')
 
@@ -131,9 +144,3 @@ class DACdev(command):
 
     def sendChar(self,ch):
         self.write(ch)
-
-    def setValue(self,v):
-        self.write('D')
-        coms = self.vtoAD5871(v)
-        for com in coms:
-            self.write(chr(com))
