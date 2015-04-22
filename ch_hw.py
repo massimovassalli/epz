@@ -2,7 +2,7 @@ import epz3 as epz
 epz.EPSERVER = '193.43.20.118'
 import epdspic as pic
 
-class DACvalue( epz.HWparameter ):
+class DACvalue(epz.HWparameter):
 
     def init(self):
         self.ser = pic.DACdev() #MN: DACdev initially resets to 0 the output value

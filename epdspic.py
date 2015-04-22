@@ -66,7 +66,7 @@ class data:
 
         rbuf=b'00'
         bcm2835_spi_transfernb(b'0',rbuf,2)
-        return int(binascii.hexlify(rbuf),16)
+        return int(binascii.hexlify(rbuf),16)   # ^ 0x8000
 
     def read(self):
         vbin = self.transfer16()

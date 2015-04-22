@@ -82,14 +82,14 @@ class EnQueuer(Consumer):
                     val = float(val)
                 else:
                     val = val.split(';')
-                    for i in range(len(val)):
-                        val[i]=float(val[i])
+                    val = [m for m in map(float,val)]
                 self.queue.put(val)
 
 
 class Signal(Parameter):
     def start(self):
         self.data = EnQueuer(self.devicename, self.parname + '_data')
+        self.data.tracks = self.tracks
         self.queue = self.data.queue
         self.data.start()
         return super(Signal, self).start()
