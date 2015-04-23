@@ -92,34 +92,15 @@ class command(object):
 
         self.ser = ser
 
-        self.cmdchar = 'D'
-
-    def vtoAD5871(self,v):
-        """
-        Convert expected output in VOLT to the correct word for AD5871
-        """
-        n16bit = int(round(  (2**18 -1) * (v + DACVREF*self.polarity) / (DACVREF * (1+self.polarity)) ))
-        nFull = (n16bit<<2)+0x100000
-        nA = (nFull & 0xFF0000) >> 16
-        nB = (nFull - (nA << 16) ) >> 8
-        nC = nFull - (nA << 16) - (nB << 8)
-
-        return nA,nB,nC
-
     def write(self,cmd):
         self.ser.open()
         self.ser.flushInput()   #flush input buffer, discarding all its contents
         self.ser.flushOutput()  #flush output buffer, aborting current output 
                                 #and discard all that is in buffer
         #write data    
-        self.ser.write(cmd.encode())
+        self.ser.write(cmd.to_bytes(1,'big'))
         self.ser.close()
 
-    def setValue(self,v):
-        self.write(self.cmdchar)
-        coms = self.vtoAD5871(v)
-        for com in coms:
-            self.write(chr(com))
 
 
 class ADCdev(data):
@@ -134,13 +115,31 @@ class DACdev(command):
         self.value=0.0
 
     def setToZero(self):
-        self.write('Z')
+        self.write(ord('Z'))
 
     def setPolarity(self,p=DACBIPOLAR):
         self.polarity = p
-        self.write('P')
-        pols = {DACUNIPOLAR:chr(0),DACBIPOLAR:chr(1)}
+        self.write(ord('P'))
+        pols = {DACUNIPOLAR:0x00,DACBIPOLAR:0x01}
         self.write(pols[p])
 
     def sendChar(self,ch):
         self.write(ch)
+
+    def vtoAD5871(self,v):
+        """
+        Convert expected output in VOLT to the correct word for AD5871
+        """
+        n16bit = int(round(  (2**18 -1) * (v + DACVREF*self.polarity) / (DACVREF * (1+self.polarity)) ))
+        nFull = (n16bit<<2)+0x100000
+        nA = (nFull & 0xFF0000) >> 16
+        nB = (nFull - (nA << 16) ) >> 8
+        nC = nFull - (nA << 16) - (nB << 8)
+
+        return nA,nB,nC
+
+    def setValue(self,v):
+        self.write(ord('D'))
+        coms = self.vtoAD5871(v)
+        for com in coms:
+            self.write(com)

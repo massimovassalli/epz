@@ -124,6 +124,7 @@ class Producer(threading.Thread):
         self.goahead = False
         self.qlen = 0
         self.on = True
+        self.smoothupdate = True
         self.sent=0
         self.tsleep = 0.0001
         self.decimation = 1
@@ -252,7 +253,7 @@ class Device(threading.Thread):
                 p = self.hw[par]
                 if val != '*':
                     valtogive = p.type(val)
-                    if valtogive != p.value:
+                    if (valtogive != p.value) or (p.smoothupdate == False):
                         execupdate = p.update(valtogive) 
                         if execupdate:
                             p.value=valtogive
