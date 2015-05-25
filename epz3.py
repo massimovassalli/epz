@@ -6,12 +6,12 @@ import zmq
 import threading
 import queue
 
-# IP address of the FW engine
-EPSERVER = '127.0.0.1'
-# SUBPORT = the port to which clients will subscribe
-SUBPORT = 5000
-# PUBPORT = the port to which clients will publish
-PUBPORT = 5010
+
+EPSERVER = '127.0.0.1' # IP address of the FW engine
+SUBPORT = 5000 # SUBPORT = the port to which clients will subscribe
+PUBPORT = 5010 # PUBPORT = the port to which clients will publish
+
+
 CONTEXT = zmq.Context.instance()
 
 
