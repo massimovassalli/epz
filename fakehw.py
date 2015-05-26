@@ -45,7 +45,7 @@ def send():
     while loop:
         n = np.random.random()
         t = time.clock()
-        msg = '{0}:{1}:{2}'.format(t,np.sin(2*np.pi*t/1.0)+n,np.cos(2*np.pi*t/1.0)+n)
+        msg = '{0}:{1}:{2}'.format(t,np.sin(2*np.pi*t/1.0)+n,np.cos(2*np.pi*t/1.0)-n)
         ssock.send_string(msg)
 
 acpol = threading.Thread(target=receive)
