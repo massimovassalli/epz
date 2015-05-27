@@ -12,7 +12,6 @@ config.read('epz.ini')
 EPSERVER = config['ZMQ']['EPSERVER']
 SUBPORT = config['ZMQ']['SUBPORT']
 PUBPORT = config['ZMQ']['PUBPORT']
-ISFW = config.getboolean('ZMQ','FORWARDING')
 
 CONTEXT = zmq.Context.instance()
 
