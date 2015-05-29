@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'epz.ui'
 #
-# Created: Wed May 27 11:58:53 2015
+# Created: Fri May 29 15:14:34 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -69,19 +69,18 @@ class Ui_MainWindow(object):
         self.grafomini.setSizePolicy(sizePolicy)
         self.grafomini.setObjectName(_fromUtf8("grafomini"))
         self.horizontalLayout_2.addWidget(self.grafomini)
-        self.horizontalLayout_2.setStretch(0, 2)
+        self.horizontalLayout_2.setStretch(0, 1)
         self.horizontalLayout_2.setStretch(1, 1)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.grafomaxi = PlotWidget(self.centralwidget)
+        self.grafomaxi.setObjectName(_fromUtf8("grafomaxi"))
+        self.verticalLayout_2.addWidget(self.grafomaxi)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.grafo = PlotWidget(self.centralwidget)
         self.grafo.setObjectName(_fromUtf8("grafo"))
         self.horizontalLayout_3.addWidget(self.grafo)
-        self.grafomaxi = PlotWidget(self.centralwidget)
-        self.grafomaxi.setObjectName(_fromUtf8("grafomaxi"))
-        self.horizontalLayout_3.addWidget(self.grafomaxi)
         self.horizontalLayout_3.setStretch(0, 2)
-        self.horizontalLayout_3.setStretch(1, 1)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -93,6 +92,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.cmd.sizePolicy().hasHeightForWidth())
         self.cmd.setSizePolicy(sizePolicy)
         self.cmd.setObjectName(_fromUtf8("cmd"))
+        self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
@@ -140,6 +140,7 @@ class Ui_MainWindow(object):
         self.cmd.setItemText(3, _translate("MainWindow", "K", None))
         self.cmd.setItemText(4, _translate("MainWindow", "s", None))
         self.cmd.setItemText(5, _translate("MainWindow", "g", None))
+        self.cmd.setItemText(6, _translate("MainWindow", "8", None))
         self.butDo.setText(_translate("MainWindow", "GO", None))
 
 from pyqtgraph import PlotWidget

@@ -43,8 +43,8 @@ class QtMON(QThread):
         return super().start()
 
     def actOnData(self,v):
-        self.x_received.emit(int(v[0]*1000.0))
-        self.y_received.emit(int(v[1]*1000.0))
+        self.x_received.emit(int(v[1]*1000.0))
+        self.y_received.emit(int(v[2]*1000.0))
 
         if self.memory:
             if len(self.x) == self.memlen:
@@ -70,6 +70,7 @@ class QtDATA(QThread):
         self.chunk = 10000
         self.x = []
         self.y = []
+        self.t = []
         self.queue = queue.Queue()
         self. save = True
         self.notify = False
@@ -81,8 +82,8 @@ class QtDATA(QThread):
         self.socket.connect("tcp://{0}:{1}".format(EPSERVER, SUBPORT))
         return super().start()
 
-    def actOnData(self):
-        self.chunkReceived.emit([self.x,self.y])
+    def actOnData(self,v):
+        self.chunkReceived.emit(v)
 
     def run(self):
         while self.goahead:
@@ -91,10 +92,12 @@ class QtDATA(QThread):
             if self.save:
                 self.queue.put(data)
             if self.notify:
-                self.x.append(data[0])
-                self.y.append(data[1])
+                self.t.append(data[0])
+                self.x.append(data[1])
+                self.y.append(data[2])
                 if len(self.x) >= self.chunk:
-                    self.actOnData()
+                    self.actOnData([self.t,self.x,self.y])
                     self.x=[]
                     self.y=[]
+                    self.t=[]
         print('Finishing data thread')

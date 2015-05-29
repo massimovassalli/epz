@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,1">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -87,12 +87,12 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,1">
+     <widget class="PlotWidget" name="grafomaxi"/>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2">
       <item>
        <widget class="PlotWidget" name="grafo"/>
-      </item>
-      <item>
-       <widget class="PlotWidget" name="grafomaxi"/>
       </item>
      </layout>
     </item>
@@ -137,6 +137,11 @@
         <item>
          <property name="text">
           <string>g</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>8</string>
          </property>
         </item>
        </widget>

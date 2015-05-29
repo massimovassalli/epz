@@ -26,7 +26,6 @@ class CMD(object):
 
     def send(self, cmd, values=[]):
         msg = '{0}:CMD:{1}'.format(self.device, cmd)
-        print(msg)
         if type(values) != list :
             values=[values]
         for v in values:
