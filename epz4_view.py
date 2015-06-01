@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'epz.ui'
 #
-# Created: Fri May 29 15:14:34 2015
+# Created: Fri May 29 17:29:59 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -99,6 +99,8 @@ class Ui_MainWindow(object):
         self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
+        self.cmd.addItem(_fromUtf8(""))
+        self.cmd.addItem(_fromUtf8(""))
         self.horizontalLayout.addWidget(self.cmd)
         self.cpar = QtGui.QPlainTextEdit(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -135,12 +137,14 @@ class Ui_MainWindow(object):
         self.pro1.setFormat(_translate("MainWindow", "%v mV", None))
         self.pro2.setFormat(_translate("MainWindow", "%v mV", None))
         self.cmd.setItemText(0, _translate("MainWindow", "Z", None))
-        self.cmd.setItemText(1, _translate("MainWindow", "D", None))
-        self.cmd.setItemText(2, _translate("MainWindow", "P", None))
-        self.cmd.setItemText(3, _translate("MainWindow", "K", None))
-        self.cmd.setItemText(4, _translate("MainWindow", "s", None))
-        self.cmd.setItemText(5, _translate("MainWindow", "g", None))
-        self.cmd.setItemText(6, _translate("MainWindow", "8", None))
+        self.cmd.setItemText(1, _translate("MainWindow", "Y", None))
+        self.cmd.setItemText(2, _translate("MainWindow", "D", None))
+        self.cmd.setItemText(3, _translate("MainWindow", "P", None))
+        self.cmd.setItemText(4, _translate("MainWindow", "K", None))
+        self.cmd.setItemText(5, _translate("MainWindow", "s", None))
+        self.cmd.setItemText(6, _translate("MainWindow", "g", None))
+        self.cmd.setItemText(7, _translate("MainWindow", "8", None))
+        self.cmd.setItemText(8, _translate("MainWindow", "R", None))
         self.butDo.setText(_translate("MainWindow", "GO", None))
 
 from pyqtgraph import PlotWidget

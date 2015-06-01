@@ -40,7 +40,8 @@ class curveWindow ( QMainWindow ):
 
         self.mon = epz_qt.QtMON(DEVICE)
         self.mon.memory = True
-        self.mon.memlen = 400
+        self.mon.memlen = 20
+
         self.cmd = epz.CMD(DEVICE)
 
         self.data = epz_qt.QtDATA(DEVICE)
@@ -53,7 +54,7 @@ class curveWindow ( QMainWindow ):
         self.setConnections()
         self.mon.start()
         self.data.start()
-        self.timer.start(100)
+        #self.timer.start(100)
 
         self.tmp = np.array([  ])
 
@@ -122,10 +123,13 @@ class curveWindow ( QMainWindow ):
     def sendCMD(self):
         letter = str(self.ui.cmd.currentText() )
         parameters = self.ui.cpar.toPlainText()
+
+        print('Sending {0} with parameters {1}'.format(letter,parameters))
+
         if letter == 'K':
             self.data.goahead=False
-        if letter == '8':
-            self.tmp=[]
+        elif letter == '8':
+            self.tmp=np.array([])
         self.cmd.send(letter,parameters)
 
 

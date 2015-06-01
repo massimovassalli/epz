@@ -27,7 +27,7 @@ def receive():
     while loop:
         #  Wait for next request from client
         message = socket.recv()
-        if message==b'KILL':
+        if message==b'K':
             print('FakeSerial: KILL signal received ...')
             time.sleep (1)
             socket.send_string("KO")
@@ -37,7 +37,6 @@ def receive():
         time.sleep (1)
 def send():
     global loop
-    global whe
     ssock = CONTEXT.socket(zmq.PUB)
     ssock.connect("tcp://{0}:{1}".format(EPSERVER,PUBPORT))
 
@@ -50,16 +49,18 @@ def send():
 
         st = np.sin(2*np.pi*float(i)/10000.0)+n
         ct = np.cos(2*np.pi*float(i)/10000.0)-n
-        if j >= 7000:
-            msg = '{0}:MON:{1}:{2}'.format(DEVICE,st,ct)
+        tmp = time.clock()
+        if j >= 100:
+            msg = '{0}:MON:{1}:{2}:{3}'.format(DEVICE,tmp,st,ct)
             ssock.send_string(msg)
             j=0
-        msg = '{0}:DATA:{1}:{2}'.format(DEVICE,st,ct)
+        msg = '{0}:DATA:{1}:{2}:{3}'.format(DEVICE,tmp,st,ct)
         ssock.send_string(msg)
+        time.sleep(00.1)
 
 import forwarder as fw
-f = fw.Forwarder()
-f.start()
+#f = fw.Forwarder()
+#f.start()
 
 acpol = threading.Thread(target=receive)
 acpol.daemon = False
