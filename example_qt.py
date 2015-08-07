@@ -28,7 +28,15 @@ EPSERVER = config['ZMQ']['EPSERVER']
 SUBPORT = config['ZMQ']['SUBPORT']
 PUBPORT = config['ZMQ']['PUBPORT']
 
-DEVICE = 'EPIZMQ'
+DEVICE = config['DEVICE']['NAME']
+TIMEBASE = 20.0
+
+
+#########################################################
+currT8='1000'
+#########################################################
+
+
 
 class curveWindow ( QMainWindow ):
 
@@ -56,12 +64,10 @@ class curveWindow ( QMainWindow ):
         self.data.start()
         #self.timer.start(100)
 
-        self.tmp = np.array([  ])
+        self.tmp = np.array([])
 
     def plotmini(self):
         if len(self.mon.x)>=2:
-#            self.ui.grafomini.plotItem.clear()
-#            self.ui.grafomini.plotItem.plot(self.mon.x,self.mon.y)
             x = self.mon.x
             y = self.mon.y
             tx = np.linspace(0,len(x)-1,len(x))
@@ -85,15 +91,12 @@ class curveWindow ( QMainWindow ):
         self.ui.grafo.plotItem.plot(t,y,symbolPen='y',symbol='o',symbolSize=4)
         self.ui.grafomaxi.plotItem.clear()
         self.ui.grafomaxi.plotItem.plot(np.linspace(0,len(t),len(t)),t,symbolPen='r',symbol='o',symbolSize=4)
-        #self.ui.grafo.plotItem.plot(np.linspace(0,len(y),len(y)),np.array(y)*1000.0,symbolPen='g',symbol='o',symbolSize=4)
 
         tt = np.array(t)
 
         dt = tt[1:]-tt[0:-1]
 
-        dtime = 20
-
-        ttransfer = dtime*(tt[-1]-tt[0])/(float(len(tt)))
+        ttransfer = TIMEBASE*(tt[-1]-tt[0])/(float(len(tt)))
         mini = min(dt)
         maxi = max(dt)
         ma = 0
@@ -102,15 +105,19 @@ class curveWindow ( QMainWindow ):
 
         howmany = max(self.tmp)-min(self.tmp)
         if howmany > 0:
-            dat,xx = np.histogram(self.tmp*dtime,100,(20,4000))
+            dat,xx = np.histogram(self.tmp*TIMEBASE,100,(20,4000))
             xxx = (xx[0:-1]+xx[1:])/2.0
             xxx = xx[0:-1]
             ma = xxx[np.argmax(dat)]
             self.ui.grafomini.plotItem.clear()
-            self.ui.grafomini.plotItem.plot(xxx,dat,symbolPen='g',symbol='o',symbolSize=4)
+            self.ui.grafomini.plotItem.plot(xxx,100.0*dat/max(dat),symbolPen='g',symbol='o',symbolSize=4)
 
-        print('Now: Transfer {4}kHz - Max dt: {0}={1}us [best: {5}us] - Min dt {2}={3}us'.format(maxi,maxi*dtime,mini,mini*dtime,1000.0/ttransfer,ma))
-
+        self.ui.lcd1.display(int(1000.0*1000.0/ttransfer))
+        self.ui.lcd4.display(maxi)
+        self.ui.lcd5.display(int(maxi*TIMEBASE))
+        self.ui.lcd2.display(mini)
+        self.ui.lcd3.display(int(mini*TIMEBASE))
+        self.ui.lcd6.display(int(ma))
 
     def setConnections(self):
         self.mon.x_received.connect(self.ui.pro1.setValue)
@@ -124,12 +131,23 @@ class curveWindow ( QMainWindow ):
         letter = str(self.ui.cmd.currentText() )
         parameters = self.ui.cpar.toPlainText()
 
+        ##############################################################
+        currT8 = parameters
+        ################################################################
+
         print('Sending {0} with parameters {1}'.format(letter,parameters))
 
         if letter == 'K':
             self.data.goahead=False
-        elif letter == '8':
+        elif (letter == '8' or letter=='R' ):
+
+#######################################################################
+            if letter =='R':
+                np.savetxt('/home/vassalli/AAA_Prove/'+str(currT8)+'.txt',self.tmp*TIMEBASE)
+#######################################################################
+
             self.tmp=np.array([])
+
         self.cmd.send(letter,parameters)
 
 

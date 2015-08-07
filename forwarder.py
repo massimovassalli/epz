@@ -2,35 +2,28 @@
 EpsilonPi Forwarder
 """
 
+import epz
+ENV = epz.Environment('epz.conf')
+
 import zmq
 import threading
-
-import configparser
-config = configparser.ConfigParser()
-config.read('epz.ini')
-
-EPSERVER = config['ZMQ']['EPSERVER']
-SUBPORT = config['ZMQ']['SUBPORT']
-PUBPORT = config['ZMQ']['PUBPORT']
-
-CONTEXT = zmq.Context.instance()
 
 class Forwarder(threading.Thread):
     def __init__(self):
         super(Forwarder, self).__init__()
-        self.frontend = CONTEXT.socket(zmq.SUB)
-        self.backend = CONTEXT.socket(zmq.PUB)
-        self.subport = SUBPORT
-        self.pubport = PUBPORT
+        self.frontend = ENV.context.socket(zmq.SUB)
+        self.backend = ENV.context.socket(zmq.PUB)
+        self.subport = ENV.subport
+        self.pubport = ENV.pubport
         self.daemon = False #Keeps the forwarder alive
 
     def start(self):
         print ('Starting FW activity')
-        print ('PORT for PUB {0} - PORT for SUB {1}'.format(PUBPORT, SUBPORT))
+        print ('PORT for PUB {0} - PORT for SUB {1}'.format(self.pubport, self.subport))
         print ('-- ready --')
-        self.frontend.bind("tcp://*:{0}".format(PUBPORT))
+        self.frontend.bind("tcp://*:{0}".format(self.pubport))
         self.frontend.setsockopt_string(zmq.SUBSCRIBE, '')
-        self.backend.bind("tcp://*:{0}".format(SUBPORT))
+        self.backend.bind("tcp://*:{0}".format(self.subport))
         return super(Forwarder, self).start()
 
     def run(self):
