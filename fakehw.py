@@ -8,36 +8,46 @@ import zmq
 import threading
 
 loop = True
-inittime = time.time()
+wait = 0.001
 
-ENV = epz.Environment('epz.conf')
+ENV = epz.Environment('test.conf')
 DEVICE = ENV.device
-
+TIMEBASE = 20
 
 def receive():
     global loop
+    global wait
     socket = ENV.context.socket(zmq.SUB)
-    socket.setsockopt_string(zmq.SUBSCRIBE,"{0}:CMD:".format(DEVICE))
-    socket.connect("tcp://{0}:{1}".format(ENV.epserver,ENV.epserver))
+    head = "{0}:CMD:".format(DEVICE)
+    socket.setsockopt_string(zmq.SUBSCRIBE,head)
+    socket.connect("tcp://{0}:{1}".format(ENV.epserver,ENV.subport))
     while loop:
         #  Wait for next request from client
         message = socket.recv_string()
-        cmd = message.strip('{0}:CMD:'.format(DEVICE))
+        cmd = message.strip(head)
         if cmd[0] == 'K':
             print('FakeSerial: KILL signal received ...')
             time.sleep (1)
             loop = False
         else:
-            print ("Received request: {0}".format(message))
+            pieces = cmd.split(':')
+            letter,pars = pieces[0],pieces[1:]
+            print ("Received letter: {0} with parameters {1}".format(letter,pars))
+            if letter == '8':
+                newtime = int(pars[0])/1000000.0
+                print('Changed production interval to {0}us'.format(newtime*1000000.0))
+                wait = newtime
+
         time.sleep (1)
 
 
 def send():
     import numpy as np
     global loop
+    global wait
     ssock = ENV.context.socket(zmq.PUB)
     ssock.connect("tcp://{0}:{1}".format(ENV.epserver,ENV.pubport))
-
+    inittime = time.perf_counter()
     i = 0
     j = 0
     while loop:
@@ -47,10 +57,10 @@ def send():
         omega = 27.0
         st = np.sin(2*np.pi*float(i)*omega/10000.0)+n
         ct = np.cos(2*np.pi*float(i)*omega/10000.0)-n
-        tmp = int(1000000.0*(time.time()-inittime)/20.0)
+        tmp = int(1000000.0*(time.perf_counter()-inittime)/TIMEBASE)
         msg = '{0}:DATA:{1}:{2}:{3}'.format(DEVICE,tmp,st,ct)
         ssock.send_string(msg)
-        time.sleep(0.001)
+        time.sleep(wait)
 
 import forwarder as fw
 #f = fw.Forwarder()

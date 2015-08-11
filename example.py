@@ -2,65 +2,43 @@
 EpsilonPi Device
 """
 
-import zmq
-import time
+import epz
 import numpy as np
-
-import configparser
-config = configparser.ConfigParser()
-config.read('epz.ini')
-
-EPSERVER = config['ZMQ']['EPSERVER']
-SUBPORT = config['ZMQ']['SUBPORT']
-PUBPORT = config['ZMQ']['PUBPORT']
-
-DEVICE = 'EPIZMQ'
-
-CONTEXT = zmq.Context.instance()
-
-#psocket = CONTEXT.socket(zmq.PAIR)
-#psocket.connect("tcp://{0}:{1}".format(EPSERVER,SPIPORT))
 
 loop = True
 log = False
 
-import consumer
+import sys
+fconf = 'test.conf'
+if len(sys.argv) == 2:
+    fconf = sys.argv[1]
+ENV = epz.Environment(fconf)
 
-class myDat (consumer.DATA):
+TIMEBASE = 20.0 #in us
+TIMETIME = 50.0
 
-    def __init__(self, device):
-        super().__init__(device)
-        self.mon = False
-        self.chunk = 1000
+class myDat (epz.DATA):
 
-    def actOnData(self):
-        t = []
-
-        hm = min(self.chunk,self.queue.qsize())
-        while hm < self.chunk:
-            hm = min(self.chunk,self.queue.qsize())
-            time.sleep(1)
-
-
-        for i in range(self.chunk):
-            t.append(self.queue.get()[0])
-        t = np.array(t)
+    def actondata(self,v):
+        t = np.array(v[0])
         dt = t[1:]-t[0:-1]
 
         mini = np.min(dt)
         maxi = np.max(dt)
-        freq = 1000.0*len(t)/(t[-1]-t[0])
-        tottime = int((t[-1]-t[0])/1000.0)
 
-        print ('Time: {3}ms MIN: {0}us -- MAX: {1}us -- Effective F {2}kHz'.format(mini,maxi,freq,tottime) )
+        tottime = (t[-1]-t[0])*TIMEBASE
+        freq = self.chunk*1000.0/tottime
 
-        if self.mon:
-            self.actOnData()
+        print('MIN [{0} of {1}us] - MAX [{0} of {1}us] - FREQ [kHz]'.format(TIMETIME,TIMEBASE))
+        print ('{0} - {2} - {4}'.format(int(mini/TIMETIME),mini*TIMEBASE,int(maxi/TIMETIME),maxi*TIMEBASE,freq))
 
-dat = myDat(DEVICE)
-cmd = consumer.CMD(DEVICE)
+dat = myDat(ENV)
+dat.ttime = 0
+dat.chunk = 1000
+cmd = epz.CMD(ENV)
 
 dat.start()
+dat.notify = True
 
 while loop:
     message = input("Give me the command:parameter string to be sent to the TEST device:")
@@ -68,14 +46,11 @@ while loop:
         loop = False
         dat.goahead = False
         cmd.send('K')
-    elif message == 'LOG':
-        if log:
-            log=False
-        else:
-            log=True
-    elif message == 'do':
-        dat.mon=True
-        dat.actOnData()
-
-    msg = '{0}:{1}:{2}'.format('TEST','ACTION',message)
-
+    elif message == 'switch':
+        dat.notify = not dat.notify
+        print('--------------')
+    else:
+        letter,pars = message.split(':')
+        if letter == '8':
+            TIMETIME = int(pars)/TIMEBASE
+        cmd.send(letter, pars)

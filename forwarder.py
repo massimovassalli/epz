@@ -30,5 +30,10 @@ class Forwarder(threading.Thread):
         zmq.device(zmq.FORWARDER, self.frontend, self.backend)
 
 if __name__ == "__main__":
+    import sys
+    fconf = 'test.conf'
+    if len(sys.argv) == 2:
+        fconf = sys.argv[1]
+    ENV = epz.Environment(fconf)
     f = Forwarder()
     f.start()
