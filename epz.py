@@ -14,7 +14,7 @@ class Conf(object):
 
     def parse(self):
         if self.fname is None:
-            f = open('self.defname','r')
+            f = open(self.defname,'r')
         else:
             f = open(self.fname, 'r')
         for line in f:
@@ -119,7 +119,6 @@ class Skeldata(object):
         pass
 
     def run(self):
-        self.setzmq()
         print('DATA channel on {0} starting to receive'.format(self.device))
         while self.goahead:
             body = self.socket.recv_string()
@@ -139,9 +138,9 @@ class Skeldata(object):
 
 
 class DATA(Skeldata, threading.Thread):
-    def __init__(self,device=None):
+    def __init__(self,environment):
         threading.Thread.__init__(self)
-        Skeldata.__init__(self, device)
+        Skeldata.__init__(self, environment)
 
 try:
     from PyQt4.QtCore import pyqtSignal, QThread
@@ -150,9 +149,9 @@ try:
     class QtDATA(Skeldata, QThread):
         chunkReceived = pyqtSignal(list, name='chunkReceived')
 
-        def __init__(self, device=None):
+        def __init__(self, environment):
             QThread.__init__(self)
-            Skeldata.__init__(self, device)
+            Skeldata.__init__(self, environment)
 
         def actondata(self,v):
             self.chunkReceived.emit(v)
