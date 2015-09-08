@@ -118,6 +118,8 @@ class Skeldata(object):
     @save.setter
     def save(self, value):
         if self._save is not value:
+            if not value:
+                self.queue.append(queue.Queue())
             self.switchState(value)
         self._save = value
 
@@ -125,7 +127,7 @@ class Skeldata(object):
     def overload(self):
         return self._overload
 
-    @save.setter
+    @overload.setter
     def overload(self, value):
         if self._overload is not value:
             self.switchLoad(value)
