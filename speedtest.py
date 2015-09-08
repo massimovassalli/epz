@@ -67,6 +67,21 @@ class curveWindow ( QMainWindow ):
     def plotTime(self):
         self.ui.grafo.plotItem.curves[0].setData(self.speed)
 
+    def statusLED(self,state):
+        if state:
+            self.ui.sLED.setStyleSheet('background-color: green;')
+            self.ui.sLED.setText('ON')
+        else:
+            self.ui.sLED.setStyleSheet('background-color: gray;')
+            self.ui.sLED.setText('OFF')
+
+    def intLED(self,state):
+        if state:
+            self.ui.sINT.setStyleSheet('background-color: red;')
+            self.ui.sINT.setText('KO')
+        else:
+            self.ui.sINT.setStyleSheet('background-color: green;')
+            self.ui.sINT.setText('OK')
 
     def packetreceived(self,v):
 
@@ -101,6 +116,8 @@ class curveWindow ( QMainWindow ):
     def setConnections(self):
         self.data.chunkReceived.connect(self.packetreceived)
         self.ui.butDo.clicked.connect(self.sendCMD)
+        self.data.stateChanged.connect(self.statusLED)
+        self.data.overloadChanged.connect(self.intLED)
 
     def sendCMD(self):
         letter = str(self.ui.cmd.currentText() )

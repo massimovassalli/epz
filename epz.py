@@ -99,15 +99,37 @@ class Skeldata(object):
             self.device = device
         self.socket = None
         self.goahead = True
+        self.decimate = 1
         self.chunk = 10000
         self.x = []
         self.y = []
-        self.t = []
-        self.queue = queue.Queue()
-        self. save = True
+        self.z = []
+        self.queue = []
+        self.queue.append(queue.Queue())
+        self._save = False
+        self._overload = False
         self.notify = False
-        self.setzmq()
         self.head = ''
+
+    @property
+    def save(self):
+        return self._save
+
+    @save.setter
+    def save(self, value):
+        if self._save is not value:
+            self.switchState(value)
+        self._save = value
+
+    @property
+    def overload(self):
+        return self._overload
+
+    @save.setter
+    def overload(self, value):
+        if self._overload is not value:
+            self.switchLoad(value)
+        self._overload = value
 
     def setzmq(self):
         self.socket = self.context.socket(zmq.SUB)
@@ -118,22 +140,39 @@ class Skeldata(object):
     def actondata(self,v):
         pass
 
+    def switchState(self,state):
+        pass
+
+    def switchLoad(self,state):
+        pass
+
     def run(self):
+        self.setzmq()
         print('DATA channel on {0} starting to receive'.format(self.device))
         while self.goahead:
             body = self.socket.recv_string()
             data = [float(x) for x in body.strip(self.head).split(':')]
+            if data[3] == 1.0:
+                self.save = True
+            else:
+                self.save = False
+
+            if data[4] == 1.0:
+                self.overload = True
+            else:
+                self.overload = False
+
             if self.save:
-                self.queue.put(data)
+                self.queue[-1].put(data)
             if self.notify:
-                self.t.append(data[0])
-                self.x.append(data[1])
-                self.y.append(data[2])
+                self.x.append(data[0])
+                self.y.append(data[1])
+                self.z.append(data[2])
                 if len(self.x) >= self.chunk:
-                    self.actondata([self.t, self.x, self.y])
+                    self.actondata([self.x[::self.decimate], self.y[::self.decimate], self.z[::self.decimate]])
                     self.x=[]
                     self.y=[]
-                    self.t=[]
+                    self.z=[]
         print('Finishing data thread')
 
 
@@ -148,6 +187,17 @@ try:
 
     class QtDATA(Skeldata, QThread):
         chunkReceived = pyqtSignal(list, name='chunkReceived')
+        xDataReceived = pyqtSignal(float, name='xDataReceived')
+        yDataReceived = pyqtSignal(float, name='yDataReceived')
+        zDataReceived = pyqtSignal(float, name='zDataReceived')
+        stateChanged = pyqtSignal(bool, name='stateChanged')
+        overloadChanged = pyqtSignal(bool, name='overloadChanged')
+
+        def switchState(self,state):
+            self.stateChanged.emit(state)
+
+        def switchLoad(self,state):
+            self.overloadChanged.emit(state)
 
         def __init__(self, environment):
             QThread.__init__(self)
@@ -155,6 +205,9 @@ try:
 
         def actondata(self,v):
             self.chunkReceived.emit(v)
+            self.xDataReceived.emit(v[0][-1])
+            self.yDataReceived.emit(v[1][-1])
+            self.zDataReceived.emit(v[2][-1])
 
 except ImportError:
     pass

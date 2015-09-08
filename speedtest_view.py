@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'speedtest.ui'
 #
-# Created: Mon Aug 10 09:58:49 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created: Tue Sep  8 09:55:31 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -95,6 +95,30 @@ class Ui_MainWindow(object):
         self.lcd6.setSegmentStyle(QtGui.QLCDNumber.Flat)
         self.lcd6.setObjectName(_fromUtf8("lcd6"))
         self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.lcd6)
+        self.label_6 = QtGui.QLabel(self.centralwidget)
+        self.label_6.setObjectName(_fromUtf8("label_6"))
+        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label_6)
+        self.sLED = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.sLED.setFont(font)
+        self.sLED.setStyleSheet(_fromUtf8("background-color: gray;"))
+        self.sLED.setAlignment(QtCore.Qt.AlignCenter)
+        self.sLED.setObjectName(_fromUtf8("sLED"))
+        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.sLED)
+        self.label_7 = QtGui.QLabel(self.centralwidget)
+        self.label_7.setObjectName(_fromUtf8("label_7"))
+        self.formLayout.setWidget(7, QtGui.QFormLayout.LabelRole, self.label_7)
+        self.sINT = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.sINT.setFont(font)
+        self.sINT.setStyleSheet(_fromUtf8("background-color:green;"))
+        self.sINT.setAlignment(QtCore.Qt.AlignCenter)
+        self.sINT.setObjectName(_fromUtf8("sINT"))
+        self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.sINT)
         self.horizontalLayout_2.addLayout(self.formLayout)
         self.horizontalLayout_2.setStretch(0, 2)
         self.horizontalLayout_2.setStretch(1, 2)
@@ -113,6 +137,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.cmd.sizePolicy().hasHeightForWidth())
         self.cmd.setSizePolicy(sizePolicy)
         self.cmd.setObjectName(_fromUtf8("cmd"))
+        self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
         self.cmd.addItem(_fromUtf8(""))
@@ -154,6 +179,10 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "dt Max [step]", None))
         self.label_4.setText(_translate("MainWindow", "dt Max [us]", None))
         self.Peakus.setText(_translate("MainWindow", "Peak [us]", None))
+        self.label_6.setText(_translate("MainWindow", "Status", None))
+        self.sLED.setText(_translate("MainWindow", "OFF", None))
+        self.label_7.setText(_translate("MainWindow", "Integrity", None))
+        self.sINT.setText(_translate("MainWindow", "OK", None))
         self.cmd.setItemText(0, _translate("MainWindow", "Z", None))
         self.cmd.setItemText(1, _translate("MainWindow", "Y", None))
         self.cmd.setItemText(2, _translate("MainWindow", "D", None))
@@ -163,6 +192,7 @@ class Ui_MainWindow(object):
         self.cmd.setItemText(6, _translate("MainWindow", "g", None))
         self.cmd.setItemText(7, _translate("MainWindow", "8", None))
         self.cmd.setItemText(8, _translate("MainWindow", "R", None))
+        self.cmd.setItemText(9, _translate("MainWindow", "Q", None))
         self.butDo.setText(_translate("MainWindow", "GO", None))
 
 from pyqtgraph import PlotWidget
