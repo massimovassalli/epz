@@ -87,6 +87,39 @@ class CMD(object):
         self.socket.send_string(msg)
 
 
+class SkelCMDREC(object):
+    def __init__(self, environment, device = None):
+        self.context = environment.context
+        self.subport = environment.subport
+        self.epserver = environment.epserver
+        self.listen = True
+        if device is None:
+            self.device = environment.device
+        else:
+            self.device = device
+
+
+    def setZmq(self):
+        
+        self.socket = self.context.socket(zmq.SUB)
+        self.head = "{0}:RES:".format(self.device)
+        self.socket.setsockopt_string(zmq.SUBSCRIBE,self.head)
+        self.socket.connect("tcp://{0}:{1}".format(self.epserver, self.subport))
+        
+        
+    def react(self,resp):
+        pass
+        
+        
+    def run(self):
+        self.setZmq()
+        
+        while self.listen:
+            body = self.socket.recv_string()
+            resp = body.strip(self.head)
+            self.react(resp)
+
+
 class Skeldata(object):
 
     def __init__(self, environment, device=None):
@@ -193,6 +226,15 @@ class DATA(Skeldata, threading.Thread):
     def __init__(self,environment):
         threading.Thread.__init__(self)
         Skeldata.__init__(self, environment)
+        
+
+class CMDREC(SkelCMDREC,threading.Thread):
+    
+    def __init__(self,environment):
+        
+        threading.Thread.__init__(self)
+        CMDREC.__init__(self, environment)        
+
 
 try:
     from PyQt4.QtCore import pyqtSignal, QThread
@@ -223,6 +265,22 @@ try:
 
         def actondata(self,v):
             self.chunkReceived.emit(v)
+            
+            
+    class QtCMDREC(SkelCMDREC,QThread):
+        
+        respReceived = pyqtSignal(str,name='respReceived')
+        
+        def __init__(self,environment):
+            
+            QThread.__init__(self)
+            CMDREC.__init__(self, environment)
+            
+        
+        def react(self,resp):
+            
+            self.respReceived.emit(resp)
+
 
 except ImportError:
     pass
