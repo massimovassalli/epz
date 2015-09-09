@@ -101,6 +101,8 @@ class Skeldata(object):
         self.goahead = True
         self.decimate = 1
         self.chunk = 10000
+        self.notifyLength = 1000
+        self.tick = self.notifyLength
         self.x = []
         self.y = []
         self.z = []
@@ -142,6 +144,9 @@ class Skeldata(object):
     def actondata(self,v):
         pass
 
+    def actOnValue(self):
+        pass
+
     def switchState(self,state):
         pass
 
@@ -166,6 +171,12 @@ class Skeldata(object):
 
             if self.save:
                 self.queue[-1].put(data)
+
+            self.tick -= 1
+            if self.tick == 0:
+                self.actOnValue(data)
+                self.tick = self.notifyLength
+
             if self.notify:
                 self.x.append(data[0])
                 self.y.append(data[1])
@@ -195,6 +206,11 @@ try:
         stateChanged = pyqtSignal(bool, name='stateChanged')
         overloadChanged = pyqtSignal(bool, name='overloadChanged')
 
+        def actOnValue(self,data):
+            self.xDataReceived.emit(data[0])
+            self.yDataReceived.emit(data[1])
+            self.zDataReceived.emit(data[2])
+
         def switchState(self,state):
             self.stateChanged.emit(state)
 
@@ -207,9 +223,6 @@ try:
 
         def actondata(self,v):
             self.chunkReceived.emit(v)
-            self.xDataReceived.emit(v[0][-1])
-            self.yDataReceived.emit(v[1][-1])
-            self.zDataReceived.emit(v[2][-1])
 
 except ImportError:
     pass
