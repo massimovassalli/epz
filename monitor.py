@@ -14,7 +14,7 @@ import pyqtgraph as pg
 import epz
 
 import sys
-fconf = 'epz.conf'
+fconf = 'test.conf'
 if len(sys.argv) == 2:
     fconf = sys.argv[1]
 ENV = epz.Environment(fconf)
@@ -31,6 +31,7 @@ class curveWindow ( QMainWindow ):
         self.cmd = epz.CMD(ENV)
         self.data = epz.QtDATA(ENV)
         self.data.chunk = 1000
+        self.data.notifyLength = 100
         self.data.save = False
         self.data.notify = True
 
@@ -75,7 +76,15 @@ class curveWindow ( QMainWindow ):
 
         for i in range(3):
             self.plot(sets[i],v[i])
-            self.look(sets[i],v[i][-1])
+
+    def xUpdate(self,val):
+        self.look('x',val)
+
+    def yUpdate(self,val):
+        self.look('y',val)
+
+    def zUpdate(self,val):
+        self.look('z',val)
 
     def setMinMax(self):
         self.xrange[0] = float(self.ui.xmin.value())
@@ -87,6 +96,9 @@ class curveWindow ( QMainWindow ):
 
     def setConnections(self):
         self.data.chunkReceived.connect(self.received)
+        self.data.xDataReceived.connect(self.xUpdate)
+        self.data.yDataReceived.connect(self.yUpdate)
+        self.data.zDataReceived.connect(self.zUpdate)
         self.ui.butDo.clicked.connect(self.sendCMD)
 
         buttons = [self.ui.xmin,self.ui.xmax,self.ui.ymin,self.ui.ymax,self.ui.zmin,self.ui.zmax]

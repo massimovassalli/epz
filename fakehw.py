@@ -58,7 +58,7 @@ def send():
         st = np.sin(2*np.pi*float(i)*omega/10000.0)+n
         ct = np.cos(2*np.pi*float(i)*omega/10000.0)-n
         tmp = int(1000000.0*(time.perf_counter()-inittime)/TIMEBASE)
-        msg = '{0}:DATA:{1}:{2}:{3}'.format(DEVICE,tmp,st,ct)
+        msg = '{0}:DATA:{1}:{2}:{3}:0:0'.format(DEVICE,tmp,st,ct)
         ssock.send_string(msg)
         time.sleep(wait)
 
