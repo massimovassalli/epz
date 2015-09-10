@@ -88,21 +88,19 @@ class CMD(object):
 
 
 class SkelCMDREC(object):
-    def __init__(self, environment, device = None):
+    def __init__(self, environment):
         self.context = environment.context
         self.subport = environment.subport
         self.epserver = environment.epserver
+        self.tag = 'RES'
         self.listen = True
-        if device is None:
-            self.device = environment.device
-        else:
-            self.device = device
-
+        self.device = environment.device
+        
 
     def setZmq(self):
         
         self.socket = self.context.socket(zmq.SUB)
-        self.head = "{0}:RES:".format(self.device)
+        self.head = "{0}:{1}:".format(self.device,self.tag)
         self.socket.setsockopt_string(zmq.SUBSCRIBE,self.head)
         self.socket.connect("tcp://{0}:{1}".format(self.epserver, self.subport))
         
@@ -233,7 +231,7 @@ class CMDREC(SkelCMDREC,threading.Thread):
     def __init__(self,environment):
         
         threading.Thread.__init__(self)
-        CMDREC.__init__(self, environment)        
+        SkelCMDREC.__init__(self, environment)        
 
 
 try:
