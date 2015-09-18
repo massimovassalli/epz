@@ -2,7 +2,11 @@
 EpsilonPi Fake Hardware for tests
 """
 
-import epz
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+
+from epz import epz
 import time
 import zmq
 import threading

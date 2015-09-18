@@ -2,7 +2,11 @@
 EpsilonPi Device
 """
 
-import epz
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+
+from epz import epz
 import numpy as np
 
 loop = True

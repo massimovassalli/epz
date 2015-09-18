@@ -1,4 +1,3 @@
-import sys
 from PyQt4.QtGui import QApplication, QMainWindow
 from PyQt4 import QtCore
 
@@ -11,9 +10,12 @@ import sys,os,time
 import monitor_view as view
 import numpy as np
 import pyqtgraph as pg
-import epz
-
 import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+
+from epz import epz
+
 fconf = 'test.conf'
 if len(sys.argv) == 2:
     fconf = sys.argv[1]

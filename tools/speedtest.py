@@ -1,4 +1,3 @@
-import sys
 from PyQt4.QtGui import QApplication, QMainWindow
 from PyQt4 import QtCore
 
@@ -7,13 +6,17 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
-import sys,os,time
+# import sys,os,time
+
 import speedtest_view as view
 import numpy as np
-import pyqtgraph as pg
-import epz
-
+# import pyqtgraph as pg
 import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+
+from epz import epz
+
 fconf = 'test.conf'
 if len(sys.argv) == 2:
     fconf = sys.argv[1]
