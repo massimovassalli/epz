@@ -5,8 +5,9 @@ setup(
     version='1.0',
     packages=['epz'],
     url='https://github.com/massimovassalli/epz',
+    download_url='https://github.com/massimovassalli/epz/tag/v1.0',
     license='',
     author='Massimo Vassalli',
-    author_email='',
+    author_email='massimo.vassalli@nanobioscience.eu',
     description=''
 )
