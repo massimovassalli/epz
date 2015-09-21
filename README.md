@@ -1,6 +1,8 @@
 # epz
 EpsilonPI ZMQ communication layer
 
+Authors: Massimo Vassalli, Ettore Landini
+
 This is an implementation of a very lightweight and custom-oriented distributed framework for managing distributed
 control systems. In other words, it implements the communication layer of a network of Producers (mainly hardware-linked
 processes) and Consumers (mainly gui-oriented programs) orchestrated together to monitor and manage a physical process.
