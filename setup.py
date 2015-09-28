@@ -5,7 +5,7 @@ setup(
     version='1.0',
     packages=['epz'],
     url='https://github.com/massimovassalli/epz',
-    download_url='https://github.com/massimovassalli/epz/releases/tag/v1.0',
+    download_url='https://github.com/massimovassalli/epz/releases/tag/v1.0.1',
     keywords=['zmq','pyzmq','zeromq'],
     license='',
     author='Massimo Vassalli',

@@ -65,7 +65,7 @@ class Environment(object):
 
 
 class CMD(object):
-    def __init__(self, environment, device = None):
+    def __init__(self, environment, device = None, tag='CMD'):
         self.context = environment.context
         self.pubport = environment.pubport
         self.epserver = environment.epserver
@@ -74,12 +74,12 @@ class CMD(object):
         else:
             self.device = device
 
-        self.command = 'CMD'
+        self.tag = tag
         self.socket = self.context.socket(zmq.PUB)
         self.socket.connect("tcp://{0}:{1}".format(environment.epserver, self.pubport))
 
     def send(self, cmd, values=[]):
-        msg = '{0}:{2}:{1}'.format(self.device, cmd, self.command)
+        msg = '{0}:{2}:{1}'.format(self.device, cmd, self.tag)
         if type(values) != list :
             values = [values]
         for v in values:
@@ -88,11 +88,11 @@ class CMD(object):
 
 
 class SkelCMDREC(object):
-    def __init__(self, environment):
+    def __init__(self, environment,tag='RES'):
         self.context = environment.context
         self.subport = environment.subport
         self.epserver = environment.epserver
-        self.tag = 'RES'
+        self.tag = tag
         self.listen = True
         self.device = environment.device
         
@@ -120,7 +120,7 @@ class SkelCMDREC(object):
 
 class Skeldata(object):
 
-    def __init__(self, environment, device=None):
+    def __init__(self, environment, device=None, tag = 'DATA'):
         self.context = environment.context
         self.subport = environment.subport
         self.epserver = environment.epserver
@@ -128,6 +128,7 @@ class Skeldata(object):
             self.device = environment.device
         else:
             self.device = device
+        self.tag = tag
         self.socket = None
         self.goahead = True
         self.decimate = 1
@@ -168,7 +169,7 @@ class Skeldata(object):
 
     def setzmq(self):
         self.socket = self.context.socket(zmq.SUB)
-        self.head = "{0}:DATA:".format(self.device)
+        self.head = "{0}:{1}:".format(self.device,self.tag)
         self.socket.setsockopt_string(zmq.SUBSCRIBE,self.head)
         self.socket.connect("tcp://{0}:{1}".format(self.epserver, self.subport))
 
@@ -186,7 +187,7 @@ class Skeldata(object):
 
     def run(self):
         self.setzmq()
-        print('DATA channel on {0} starting to receive'.format(self.device))
+        print('{0} channel on {1} starting to receive'.format(self.tag,self.device))
         while self.goahead:
             body = self.socket.recv_string()
             data = [float(x) for x in body.strip(self.head).split(':')]
@@ -221,17 +222,17 @@ class Skeldata(object):
 
 
 class DATA(Skeldata, threading.Thread):
-    def __init__(self,environment):
+    def __init__(self,environment,tag = 'DATA'):
         threading.Thread.__init__(self)
-        Skeldata.__init__(self, environment)
+        Skeldata.__init__(self, environment,tag)
         
 
 class CMDREC(SkelCMDREC,threading.Thread):
     
-    def __init__(self,environment):
+    def __init__(self,environment,tag = 'RES'):
         
         threading.Thread.__init__(self)
-        SkelCMDREC.__init__(self, environment)        
+        SkelCMDREC.__init__(self, environment,tag)
 
 
 try:
@@ -257,9 +258,9 @@ try:
         def switchLoad(self,state):
             self.overloadChanged.emit(state)
 
-        def __init__(self, environment):
+        def __init__(self, environment,tag = 'DATA'):
             QThread.__init__(self)
-            Skeldata.__init__(self, environment)
+            Skeldata.__init__(self, environment,tag)
 
         def actondata(self,v):
             self.chunkReceived.emit(v)
@@ -269,10 +270,10 @@ try:
         
         respReceived = pyqtSignal(str,name='respReceived')
         
-        def __init__(self,environment):
+        def __init__(self,environment,tag = 'RES'):
             
             QThread.__init__(self)
-            CMDREC.__init__(self, environment)
+            CMDREC.__init__(self, environment,tag)
             
         
         def react(self,resp):
