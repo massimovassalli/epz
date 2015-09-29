@@ -88,14 +88,16 @@ class CMD(object):
 
 
 class SkelCMDREC(object):
-    def __init__(self, environment,tag='RES'):
+    def __init__(self, environment,device = None,tag='RES'):
         self.context = environment.context
         self.subport = environment.subport
         self.epserver = environment.epserver
         self.tag = tag
         self.listen = True
-        self.device = environment.device
-        
+        if device is None:
+            self.device = environment.device
+        else:
+            self.device = device
 
     def setZmq(self):
         
@@ -229,10 +231,10 @@ class DATA(Skeldata, threading.Thread):
 
 class CMDREC(SkelCMDREC,threading.Thread):
     
-    def __init__(self,environment,tag = 'RES'):
+    def __init__(self,environment,device = None,tag = 'RES'):
         
         threading.Thread.__init__(self)
-        SkelCMDREC.__init__(self, environment,tag)
+        SkelCMDREC.__init__(self, environment,device,tag)
 
 
 try:
@@ -258,9 +260,9 @@ try:
         def switchLoad(self,state):
             self.overloadChanged.emit(state)
 
-        def __init__(self, environment,tag = 'DATA'):
+        def __init__(self, environment,device = None,tag = 'DATA'):
             QThread.__init__(self)
-            Skeldata.__init__(self, environment,tag)
+            Skeldata.__init__(self, environment,device,tag)
 
         def actondata(self,v):
             self.chunkReceived.emit(v)
@@ -270,10 +272,10 @@ try:
         
         respReceived = pyqtSignal(str,name='respReceived')
         
-        def __init__(self,environment,tag = 'RES'):
+        def __init__(self,environment,device = None,tag = 'RES'):
             
             QThread.__init__(self)
-            CMDREC.__init__(self, environment,tag)
+            CMDREC.__init__(self, environment,device,tag)
             
         
         def react(self,resp):
