@@ -238,7 +238,10 @@ class CMDREC(SkelCMDREC,threading.Thread):
 
 
 try:
-    from PyQt4.QtCore import pyqtSignal, QThread
+    try:
+        from PyQt5.QtCore import pyqtSignal, QThread
+    except:
+        from PyQt4.QtCore import pyqtSignal, QThread
 
 
     class QtDATA(Skeldata, QThread):

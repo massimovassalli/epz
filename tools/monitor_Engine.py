@@ -1,5 +1,13 @@
-from PyQt4.QtGui import QApplication, QMainWindow
-from PyQt4 import QtCore
+try:
+    from PyQt5.QtWidgets import QApplication, QMainWindow
+    from PyQt5 import QtCore
+except:
+    from PyQt4.QtGui import QApplication, QMainWindow
+    from PyQt4 import QtCore
+
+
+TIMEBASE = 20.0
+TIMETIME = 50
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -7,7 +15,7 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 import sys,os,time
-import monitor_view as view
+import tools.monitor_MainGUI as view
 import numpy as np
 import pyqtgraph as pg
 import sys
@@ -31,7 +39,7 @@ class curveWindow ( QMainWindow ):
         self.ui.setupUi(self)
 
         self.cmd = epz.CMD(ENV)
-        self.data = epz.QtDATA(ENV)
+        self.data = epz.QtDATA(ENV,device=None)
         self.data.chunk = 1000
         self.data.notifyLength = 100
         self.data.save = False
@@ -75,11 +83,13 @@ class curveWindow ( QMainWindow ):
 
     def received(self,v):
         sets = ['x','y','z']
+        print('ci sono')
 
         for i in range(3):
             self.plot(sets[i],v[i])
 
     def xUpdate(self,val):
+        print('ciao')
         self.look('x',val)
 
     def yUpdate(self,val):
@@ -108,19 +118,19 @@ class curveWindow ( QMainWindow ):
             b.valueChanged.connect(self.setMinMax)
 
     def sendCMD(self):
-        letter = str(self.ui.cmd.currentText() )
+        panelstrng = str(self.ui.cmd.currentText() )
+        strng = panelstrng.partition(' ')[0]
         parameters = self.ui.cpar.toPlainText()
-        print('Sending {0} with parameters {1}'.format(letter,parameters))
 
-        if letter == 'K':
+        print('Sending {0} with parameters {1}'.format(strng,parameters))
+
+        if strng == 'KILL':
             self.data.goahead=False
-        elif letter=='8':
+        elif strng == 'SET_TIM8PER':
             TIMETIME = int(parameters)/TIMEBASE
-            self.tmp = np.array([])
-        elif letter=='R':
-            self.tmp = np.array([])
+            self.tmp=np.array([])
+        self.cmd.send(strng,parameters)
 
-        self.cmd.send(letter,parameters)
 
 
 if __name__ == "__main__":

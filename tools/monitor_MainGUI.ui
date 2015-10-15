@@ -430,47 +430,107 @@
         </property>
         <item>
          <property name="text">
-          <string>Z</string>
+          <string>SWITCH_SPI send data [1] or not [0] to this client</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Y</string>
+          <string>SET_USECIRCBUFF use [1] or not [0] the Circular Buffer</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>D</string>
+          <string>INIT_SPI2 init the SPI2 and set or reset var 'isTheFirstTime'</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>P</string>
+          <string>SET_TIMETRIG set variable 'stopTrigTime'</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>K</string>
+          <string>SET_Z24 set DAC to 2V [Vref:5V] or 4V [Vref:10V]</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>s</string>
+          <string>SET_Z set DAC to specified value</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>g</string>
+          <string>SET_SPEEDSIGN set variable 'dacStepSign' to 0 or 1</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>8</string>
+          <string>SET_SPEED set variables 'dacStep' and 'dacStepCumul'</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>R</string>
+          <string>SET_MODEDBG (debug command) set theMode</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_TESTPIN set TestPin to 0 or 1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_DACMODE set DAC mode (unipolar [0] or bipolar [1])</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_ZTO0 set DAC output to zero</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_FTRIG set variable 'stopTrigADC'</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_ZTRIG set variable 'stopTrigDAC'</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_TRIGGERS set which stopTriggers must be used</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>START_MODSAFE start an operating mode in a safe way</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_SETPOINT set control setpoint</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_PGAIN set control P gain</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_IGAIN set control I gain</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_DGAIN set control D gain</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>KILL kills the epizmq program</string>
          </property>
         </item>
        </widget>
