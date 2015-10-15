@@ -83,13 +83,11 @@ class curveWindow ( QMainWindow ):
 
     def received(self,v):
         sets = ['x','y','z']
-        print('ci sono')
 
         for i in range(3):
             self.plot(sets[i],v[i])
 
     def xUpdate(self,val):
-        print('ciao')
         self.look('x',val)
 
     def yUpdate(self,val):
