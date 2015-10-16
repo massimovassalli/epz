@@ -430,7 +430,7 @@
         </property>
         <item>
          <property name="text">
-          <string>SWITCH_SPI send data [1] or not [0] to this client</string>
+          <string>SWITCH_SPI2 send data [1] or not [0] to this client</string>
          </property>
         </item>
         <item>
@@ -450,12 +450,17 @@
         </item>
         <item>
          <property name="text">
-          <string>SET_Z24 set DAC to 2V [Vref:5V] or 4V [Vref:10V]</string>
+          <string>SET_DAC_2OR4 set DAC to 2V [Vref:5V] or 4V [Vref:10V]</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>SET_Z set DAC to specified value</string>
+          <string>SET_DAC_SOFT soft-set DAC to specified value in Volt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_DAC_HARD hard-set DAC to specified value in Volt</string>
          </property>
         </item>
         <item>
@@ -485,7 +490,7 @@
         </item>
         <item>
          <property name="text">
-          <string>SET_ZTO0 set DAC output to zero</string>
+          <string>SET_DACTO0 set DAC output to zero</string>
          </property>
         </item>
         <item>

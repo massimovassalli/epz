@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'monitor.ui'
+# Form implementation generated from reading ui file 'monitor_MainGUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #
@@ -242,6 +242,7 @@ class Ui_MainWindow(object):
         self.cmd.addItem("")
         self.cmd.addItem("")
         self.cmd.addItem("")
+        self.cmd.addItem("")
         self.horizontalLayout.addWidget(self.cmd)
         self.cpar = QtWidgets.QPlainTextEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -278,27 +279,28 @@ class Ui_MainWindow(object):
         self.xmon.setFormat(_translate("MainWindow", "%v"))
         self.ymon.setFormat(_translate("MainWindow", "%v"))
         self.zmon.setFormat(_translate("MainWindow", "%v"))
-        self.cmd.setItemText(0, _translate("MainWindow", "SWITCH_SPI send data [1] or not [0] to this client"))
+        self.cmd.setItemText(0, _translate("MainWindow", "SWITCH_SPI2 send data [1] or not [0] to this client"))
         self.cmd.setItemText(1, _translate("MainWindow", "SET_USECIRCBUFF use [1] or not [0] the Circular Buffer"))
         self.cmd.setItemText(2, _translate("MainWindow", "INIT_SPI2 init the SPI2 and set or reset var \'isTheFirstTime\'"))
         self.cmd.setItemText(3, _translate("MainWindow", "SET_TIMETRIG set variable \'stopTrigTime\'"))
-        self.cmd.setItemText(4, _translate("MainWindow", "SET_Z24 set DAC to 2V [Vref:5V] or 4V [Vref:10V]"))
-        self.cmd.setItemText(5, _translate("MainWindow", "SET_Z set DAC to specified value"))
-        self.cmd.setItemText(6, _translate("MainWindow", "SET_SPEEDSIGN set variable \'dacStepSign\' to 0 or 1"))
-        self.cmd.setItemText(7, _translate("MainWindow", "SET_SPEED set variables \'dacStep\' and \'dacStepCumul\'"))
-        self.cmd.setItemText(8, _translate("MainWindow", "SET_MODEDBG (debug command) set theMode"))
-        self.cmd.setItemText(9, _translate("MainWindow", "SET_TESTPIN set TestPin to 0 or 1"))
-        self.cmd.setItemText(10, _translate("MainWindow", "SET_DACMODE set DAC mode (unipolar [0] or bipolar [1])"))
-        self.cmd.setItemText(11, _translate("MainWindow", "SET_ZTO0 set DAC output to zero"))
-        self.cmd.setItemText(12, _translate("MainWindow", "SET_FTRIG set variable \'stopTrigADC\'"))
-        self.cmd.setItemText(13, _translate("MainWindow", "SET_ZTRIG set variable \'stopTrigDAC\'"))
-        self.cmd.setItemText(14, _translate("MainWindow", "SET_TRIGGERS set which stopTriggers must be used"))
-        self.cmd.setItemText(15, _translate("MainWindow", "START_MODSAFE start an operating mode in a safe way"))
-        self.cmd.setItemText(16, _translate("MainWindow", "SET_SETPOINT set control setpoint"))
-        self.cmd.setItemText(17, _translate("MainWindow", "SET_PGAIN set control P gain"))
-        self.cmd.setItemText(18, _translate("MainWindow", "SET_IGAIN set control I gain"))
-        self.cmd.setItemText(19, _translate("MainWindow", "SET_DGAIN set control D gain"))
-        self.cmd.setItemText(20, _translate("MainWindow", "KILL kills the epizmq program"))
+        self.cmd.setItemText(4, _translate("MainWindow", "SET_DAC_2OR4 set DAC to 2V [Vref:5V] or 4V [Vref:10V]"))
+        self.cmd.setItemText(5, _translate("MainWindow", "SET_DAC_SOFT soft-set DAC to specified value in Volt"))
+        self.cmd.setItemText(6, _translate("MainWindow", "SET_DAC_HARD hard-set DAC to specified value in Volt"))
+        self.cmd.setItemText(7, _translate("MainWindow", "SET_SPEEDSIGN set variable \'dacStepSign\' to 0 or 1"))
+        self.cmd.setItemText(8, _translate("MainWindow", "SET_SPEED set variables \'dacStep\' and \'dacStepCumul\'"))
+        self.cmd.setItemText(9, _translate("MainWindow", "SET_MODEDBG (debug command) set theMode"))
+        self.cmd.setItemText(10, _translate("MainWindow", "SET_TESTPIN set TestPin to 0 or 1"))
+        self.cmd.setItemText(11, _translate("MainWindow", "SET_DACMODE set DAC mode (unipolar [0] or bipolar [1])"))
+        self.cmd.setItemText(12, _translate("MainWindow", "SET_DACTO0 set DAC output to zero"))
+        self.cmd.setItemText(13, _translate("MainWindow", "SET_FTRIG set variable \'stopTrigADC\'"))
+        self.cmd.setItemText(14, _translate("MainWindow", "SET_ZTRIG set variable \'stopTrigDAC\'"))
+        self.cmd.setItemText(15, _translate("MainWindow", "SET_TRIGGERS set which stopTriggers must be used"))
+        self.cmd.setItemText(16, _translate("MainWindow", "START_MODSAFE start an operating mode in a safe way"))
+        self.cmd.setItemText(17, _translate("MainWindow", "SET_SETPOINT set control setpoint"))
+        self.cmd.setItemText(18, _translate("MainWindow", "SET_PGAIN set control P gain"))
+        self.cmd.setItemText(19, _translate("MainWindow", "SET_IGAIN set control I gain"))
+        self.cmd.setItemText(20, _translate("MainWindow", "SET_DGAIN set control D gain"))
+        self.cmd.setItemText(21, _translate("MainWindow", "KILL kills the epizmq program"))
         self.butDo.setText(_translate("MainWindow", "GO"))
 
 from pyqtgraph import PlotWidget
