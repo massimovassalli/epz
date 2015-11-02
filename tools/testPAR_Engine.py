@@ -24,6 +24,7 @@ from tools import testPAR_MainGUI as view
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
 
 import epz
+from tools.epzInterpreter import QtQuerist
 
 fconf = 'test.conf'
 if len(sys.argv) == 2:
@@ -41,7 +42,7 @@ class curveWindow ( QMainWindow ):
 
         self.cmd = epz.CMD(ENV)
         self.par = epz.CMD(ENV,tag = 'REQPAR')
-        self.parrec = epz.QtCMDREC(ENV,device=None,tag='SNDPAR')
+        #self.parrec = epz.QtCMDREC(ENV,device=None,tag='SNDPAR')
         self.data = epz.QtDATA(ENV,device=None)
         self.data.chunk = 1000
         self.data.notifyLength = 100
@@ -49,7 +50,8 @@ class curveWindow ( QMainWindow ):
         self.data.notify = True
 
         self.setConnections()
-        self.parrec.start()
+        self.querist = QtQuerist(ENV)
+        #self.parrec.start()
         self.data.start()
 
         self.xrange = [-10.0, 10.0]
@@ -118,7 +120,7 @@ class curveWindow ( QMainWindow ):
         self.data.zDataReceived.connect(self.zUpdate)
         self.ui.butDo.clicked.connect(self.sendCMD)
         self.ui.sendPAR.clicked.connect(self.sendPAR)
-        self.parrec.respReceived.connect(self.parWasReceived)
+        #self.parrec.respReceived.connect(self.parWasReceived)
 
         buttons = [self.ui.xmin,self.ui.xmax,self.ui.ymin,self.ui.ymax,self.ui.zmin,self.ui.zmax]
         for b in buttons:
@@ -142,7 +144,12 @@ class curveWindow ( QMainWindow ):
         panelstrng = str(self.ui.par.currentText() )
         strng = panelstrng.partition(' ')[0]
         parameters = ' '
-
+        queries = [self.querist.askDevice,self.querist.askAdcRange,self.querist.askAdcMin,
+                   self.querist.askAdcMax,self.querist.askAdcResolution,self.querist.askAdcBufPresence,
+                   self.querist.askAdcBufInMin,self.querist.askAdcBufInMax,self.querist.askAdcBufOutMin,
+                   self.querist.askAdcBufOutMax,self.querist.askDacRef,self.querist.askDacPolarity]
+        resp = queries[self.ui.par.currentIndex()]()
+        self.ui.parDisplay.display(float(resp))
         print('Sending param command {0}'.format(strng))
 
         self.par.send(strng, parameters)
