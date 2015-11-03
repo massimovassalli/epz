@@ -20,10 +20,11 @@ import os
 import numpy as np
 
 from tools import testPAR_MainGUI as view
+from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
 
-import epz
+import epz.epz as epz
 from tools.epzInterpreter import QtQuerist
 
 fconf = 'test.conf'
@@ -49,14 +50,16 @@ class curveWindow ( QMainWindow ):
         self.data.save = False
         self.data.notify = True
 
-        self.setConnections()
         self.querist = QtQuerist(ENV)
+        self.setConnections()
         #self.parrec.start()
         self.data.start()
 
         self.xrange = [-10.0, 10.0]
         self.yrange = [-10.0, 10.0]
         self.zrange = [-10.0, 10.0]
+
+        self.times = datetime.now()
 
         for grafo in [self.ui.xgrafo, self.ui.ygrafo, self.ui.zgrafo]:
             grafo.plotItem.clear()
@@ -88,8 +91,10 @@ class curveWindow ( QMainWindow ):
         self.show()
 
     def received(self,v):
+        times = datetime.now()
         sets = ['x','y','z']
-
+        print(times-self.times)
+        self.times = times
         for i in range(3):
             self.plot(sets[i],v[i])
 
@@ -120,6 +125,7 @@ class curveWindow ( QMainWindow ):
         self.data.zDataReceived.connect(self.zUpdate)
         self.ui.butDo.clicked.connect(self.sendCMD)
         self.ui.sendPAR.clicked.connect(self.sendPAR)
+        self.querist.heardSomething.connect(self.parWasReceived)
         #self.parrec.respReceived.connect(self.parWasReceived)
 
         buttons = [self.ui.xmin,self.ui.xmax,self.ui.ymin,self.ui.ymax,self.ui.zmin,self.ui.zmax]
@@ -141,7 +147,7 @@ class curveWindow ( QMainWindow ):
         self.cmd.send(strng,parameters)
 
     def sendPAR(self):
-        panelstrng = str(self.ui.par.currentText() )
+        panelstrng = str(self.ui.par.currentText())
         strng = panelstrng.partition(' ')[0]
         parameters = ' '
         queries = [self.querist.askDevice,self.querist.askAdcRange,self.querist.askAdcMin,
@@ -149,7 +155,6 @@ class curveWindow ( QMainWindow ):
                    self.querist.askAdcBufInMin,self.querist.askAdcBufInMax,self.querist.askAdcBufOutMin,
                    self.querist.askAdcBufOutMax,self.querist.askDacRef,self.querist.askDacPolarity]
         resp = queries[self.ui.par.currentIndex()]()
-        self.ui.parDisplay.display(float(resp))
         print('Sending param command {0}'.format(strng))
 
         self.par.send(strng, parameters)

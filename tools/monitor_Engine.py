@@ -85,6 +85,7 @@ class curveWindow ( QMainWindow ):
         sets = ['x','y','z']
 
         for i in range(3):
+            print('datamax: {0}, datamin: {1}'.format(np.max(np.array(v[i])),np.min(np.array(v[i]))))
             self.plot(sets[i],v[i])
 
     def xUpdate(self,val):

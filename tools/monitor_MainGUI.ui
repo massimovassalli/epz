@@ -465,12 +465,17 @@
         </item>
         <item>
          <property name="text">
-          <string>SET_SPEEDSIGN set variable 'dacStepSign' to 0 or 1</string>
+          <string>SET_RAMPSIGN set variable 'dacStepSign' to 0 or 1</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>SET_SPEED set variables 'dacStep' and 'dacStepCumul'</string>
+          <string>SET_NUMT6TRIG set the 'numt6tick' value</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SET_DACSTEP set variables 'dacStep'</string>
          </property>
         </item>
         <item>
