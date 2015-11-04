@@ -82,10 +82,12 @@ class curveWindow ( QMainWindow ):
         mn,mx = rngs[signal]
         led = leds[signal]
 
-        valbig = 10000 * (val-mn)/(mx-mn)
-
-        mon.setValue(valbig)
-        dial.setValue(valbig)
+        valbig = int((val-mn)/(mx-mn))
+        try:
+            mon.setValue(int(valbig))
+            dial.setValue(valbig)
+        except:
+            pass
         led.display(val)
 
         self.show()
@@ -93,7 +95,6 @@ class curveWindow ( QMainWindow ):
     def received(self,v):
         times = datetime.now()
         sets = ['x','y','z']
-        print(times-self.times)
         self.times = times
         for i in range(3):
             self.plot(sets[i],v[i])
