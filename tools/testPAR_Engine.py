@@ -1,4 +1,9 @@
+import testPAR_MainGUI as view
+import sys
+CURRMOD = list(sys.modules.keys())
 try:
+    ENV = 'PyQt5'
+    CURRMOD.index(ENV)
     from PyQt5.QtWidgets import QApplication, QMainWindow
     from PyQt5 import QtCore
 except:
@@ -14,13 +19,11 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
-import sys
 import os
 
 import numpy as np
 from time import sleep
 
-import testPAR_MainGUI as view
 from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
