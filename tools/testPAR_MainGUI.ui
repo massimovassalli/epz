@@ -535,6 +535,16 @@
         </item>
         <item>
          <property name="text">
+          <string>RAMP_DOWN</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>RAMP_UP</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>KILL kills the epizmq program</string>
          </property>
         </item>

@@ -18,8 +18,9 @@ import sys
 import os
 
 import numpy as np
+from time import sleep
 
-from tools import testPAR_MainGUI as view
+import testPAR_MainGUI as view
 from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
@@ -140,11 +141,42 @@ class curveWindow ( QMainWindow ):
 
         print('Sending {0} with parameters {1}'.format(strng,parameters))
 
+        
         if strng == 'KILL':
             self.data.goahead=False
         elif strng == 'SET_TIM8PER':
             TIMETIME = int(parameters)/TIMEBASE
             self.tmp=np.array([])
+        elif strng == 'RAMP_DOWN':
+            #self.cmd.send('START_MODSAFE',[0,0])
+            delay1 = float(parameters)
+            self.cmd.send('SET_TRIGGERS',[0,1,0])
+            sleep(delay1)
+            self.cmd.send('SET_ZTRIG',[-3.0,1])
+            sleep(delay1)
+            self.cmd.send('SET_DACSTEP',1)
+            sleep(delay1)
+            self.cmd.send('SET_NUMT6TRIG',4)
+            sleep(delay1)
+            self.cmd.send('SET_RAMPSIGN',1)
+            sleep(delay1)
+            self.cmd.send('START_MODSAFE',[3,1])
+            return
+        elif strng == 'RAMP_UP':
+            #self.cmd.send('START_MODSAFE',[0,0])
+            delay1 = float(parameters)
+            self.cmd.send('SET_TRIGGERS',[0,1,0])
+            sleep(delay1)
+            self.cmd.send('SET_ZTRIG',[3.0,0])
+            sleep(delay1)
+            self.cmd.send('SET_DACSTEP',1)
+            sleep(delay1)
+            self.cmd.send('SET_NUMT6TRIG',4)
+            sleep(delay1)
+            self.cmd.send('SET_RAMPSIGN',0)
+            sleep(delay1)
+            self.cmd.send('START_MODSAFE',[3,1])
+            return
         self.cmd.send(strng,parameters)
 
     def sendPAR(self):

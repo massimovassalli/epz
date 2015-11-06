@@ -6,3 +6,6 @@
 *.xml
 files.txt
 *.zip
+*.conf
+tools/test.conf
+*.conf
