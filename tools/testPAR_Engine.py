@@ -1,4 +1,4 @@
-import testPAR_MainGUI as view
+import tools.testPAR_MainGUI as view
 import sys
 CURRMOD = list(sys.modules.keys())
 try:
@@ -29,7 +29,7 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
 
 import epz.epz as epz
-from tools.epzInterpreter import QtQuerist
+from epz.epzInterpreter import QtQuerist
 
 fconf = 'test.conf'
 if len(sys.argv) == 2:

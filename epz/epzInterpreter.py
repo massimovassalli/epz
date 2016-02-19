@@ -8,7 +8,7 @@ try:
         from libs.epz import epz as tempEpz
     epz = tempEpz
 except:
-    from epz import epz
+    from libs import epz
 
 from time import sleep
 
@@ -193,13 +193,13 @@ class Commander(object):
     # @param state The state you want to start. 1
     def startSafeState(self,state,init):
 
-        self.cmd.send('SET_MODSAFE',[state,init])
+        self.cmd.send('START_MODSAFE',[state,init])
 
 
     ## Turns on the feedback
     def feedbackOn(self):
 
-        self.cmd.send('SET_MODEDBG',2)
+        self.cmd.send('START_MODSAFE',[2,0])
 
 
     ## Brings he system to the "rest" state
@@ -304,10 +304,17 @@ class DeafQuerist(object):
 
 
 try:
+    import sys
+
+    CURRMOD = list(sys.modules.keys())
     try:
-        from PyQt5.QtCore import pyqtSignal, QObject
+        ENV = 'PyQt5'
+        CURRMOD.index(ENV)
+        from PyQt5.QtCore import QObject,pyqtSignal
     except:
-        from PyQt4.QtCore import pyqtSignal, QObject
+        ENV = 'PyQt4'
+        CURRMOD.index(ENV)
+        from PyQt4.QtCore import QObject,pyqtSignal
 
 
     class QtQuerist(DeafQuerist,QObject):
