@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='epz',
-    version='1.0',
+    version='1.1',
     packages=['epz'],
     url='https://github.com/massimovassalli/epz',
     download_url='https://github.com/massimovassalli/epz/releases/tag/v1.1',
