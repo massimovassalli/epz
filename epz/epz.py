@@ -134,14 +134,14 @@ class SkelCMDREC(object):
         if self.oneShot:
 
             body = self.socket.recv_string()
-            resp = body.strip(self.head).split(':')[0]
+            resp = body[len(self.head):].split(':')[0]
             self.react(resp)
 
             return
 
         while self.listen:
             body = self.socket.recv_string()
-            resp = body.strip(self.head)
+            resp = body[len(self.head):]
             self.react(resp)
 
 
@@ -210,7 +210,7 @@ class Skeldata(object):
     def actondata(self,v):
         pass
 
-    def actOnValue(self):
+    def actOnValue(self,v):
         pass
 
     def switchState(self,state):
