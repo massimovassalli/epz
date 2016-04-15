@@ -122,7 +122,7 @@ class SkelCMDREC(object):
             self.setZmq()
 
         body = self.socket.recv_string()
-        resp = body.strip(self.head).split(':')[0]
+        resp = body[len(self.head):].split(':')[0]
 
         return resp
 
@@ -223,7 +223,7 @@ class Skeldata(object):
         self.setzmq()
         while self.goahead:
             body = self.socket.recv_string()
-            data = [float(x) for x in body.strip(self.head).split(':')]
+            data = [float(x) for x in body[len(self.head):].split(':')]
             if self.flushing:
                 self.flushMemory()
                 self.flushing = False
