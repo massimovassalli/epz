@@ -1,7 +1,7 @@
 __author__ = 'landini'
 
 try:
-    import epz as tempEpz
+    import core as tempEpz
     import inspect
     _,_,keys,_ = inspect.getargspec(tempEpz.CMD.__init__())
     if 'tag' not in keys:

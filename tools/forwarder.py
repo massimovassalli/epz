@@ -5,9 +5,7 @@ EpsilonPi Forwarder
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-
-from epz import epz
-ENV = epz.Environment('epz.conf')
+from core import epz
 
 import zmq
 import threading
@@ -15,11 +13,11 @@ import threading
 class Forwarder(threading.Thread):
     def __init__(self):
         super(Forwarder, self).__init__()
-        self.frontend = ENV.context.socket(zmq.SUB)
-        self.backend = ENV.context.socket(zmq.PUB)
-        self.subport = ENV.subport
-        self.pubport = ENV.pubport
-        self.daemon = False #Keeps the forwarder alive
+        self.frontend = epz.ENV['context'].socket(zmq.SUB)
+        self.backend = epz.ENV['context'].socket(zmq.PUB)
+        self.subport = epz.ENV['subport']
+        self.pubport = epz.ENV['pubport']
+        self.daemon = False #Keep the forwarder alive
 
     def start(self):
         print ('Starting FW activity')
@@ -33,11 +31,9 @@ class Forwarder(threading.Thread):
     def run(self):
         zmq.device(zmq.FORWARDER, self.frontend, self.backend)
 
-if __name__ == "__main__":
-    import sys
-    fconf = 'test.conf'
-    if len(sys.argv) == 2:
-        fconf = sys.argv[1]
-    ENV = epz.Environment(fconf)
+def start():
     f = Forwarder()
     f.start()
+
+if __name__ == "__main__":
+  start()

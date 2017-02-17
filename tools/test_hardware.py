@@ -1,15 +1,19 @@
-"""
-EpsilonPi Fake Hardware for tests
-"""
+# EPZ 1.0
+# CMD object to broadcast commands for a specific device
+# one COMMAND can be associated to a list of VALUES
 
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
 
-from epz import epz
-import time
-import zmq
-import threading
+import argparse
+parser = argparse.ArgumentParser()
+parser.parse_args()
+
+
+
+from core import epz
+
 
 loop = True
 wait = 0.025

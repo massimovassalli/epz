@@ -10,5 +10,5 @@ setup(
     license='',
     author='Massimo Vassalli',
     author_email='massimo.vassalli@nanobioscience.eu',
-    description=''
+    description='', requires=['zmq']
 )
