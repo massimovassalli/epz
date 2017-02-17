@@ -75,6 +75,7 @@ class server(object):
         self.sender = CMD(device=device,tag=self.pName)
         self.receiver = CMDREC(device=device,tag=self.pName)
         self.receiver.setCallback(self.setValue)
+        self.producer = DATA(device=device,tag=self.pName+'_STREAM')
         self.type = float #for arrays use self.type = lambda x : [float(y) for y in x]
         self._value = None
         self.execute = lambda x : True
@@ -84,6 +85,12 @@ class server(object):
         if fake is True:
             self.execute = lambda x:  True if x<12 else False
             self._value = 0
+        #fai partire il thread che fa l'acquisizione e mettici dentro self.produce
+
+    #to be executed in another thread
+    def produce(self):
+        #implement the production loop
+        self.producer.send(1,1,1)
 
     def stop(self):
         self.receiver.listen = False
