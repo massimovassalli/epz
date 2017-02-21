@@ -2,11 +2,11 @@
 # CMD receiver running in a separate python thread.
 # See cmdDataRec.py for details
 
-import threading
+from threading import Thread
 from .skelCmdRec import SkelCmdRec
 from .epz import ENV
 
-class CMDREC(SkelCmdRec, threading.Thread):
+class CMDREC(SkelCmdRec, Thread):
   def __init__(self, device='ME', tag='TAG', environment=ENV):
-    threading.Thread.__init__(self)
+    Thread.__init__(self)
     SkelCmdRec.__init__(self, device=device, tag=tag, environment=environment)

@@ -3,12 +3,12 @@
 # See skelDataRec.py for details
 
 from .skelDataRec import SkelDataRec
-import threading
+from threading import Thread
 from .epz import ENV
 
-class dataRec(SkelDataRec, threading.Thread):
+class dataRec(SkelDataRec, Thread):
     def __init__(self,device='ME', tag='TAG', environment=ENV):
-        threading.Thread.__init__(self)
+        Thread.__init__(self)
         SkelDataRec.__init__(self, device=device, tag=tag, environment=environment)
 
     def setDataCallback(self,callback):

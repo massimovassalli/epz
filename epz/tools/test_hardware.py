@@ -12,7 +12,11 @@ parser.parse_args()
 
 
 
-from core import epz
+from epz.core import epz
+import zmq
+
+import time
+import threading
 
 
 loop = True
@@ -72,9 +76,9 @@ def send():
         ssock.send_string(msg)
         time.sleep(wait)
 
-import forwarder as fw
-#f = fw.Forwarder()
-#f.start()
+import epz.tools.forwarder as fw
+f = fw.Forwarder()
+f.start()
 
 acpol = threading.Thread(target=receive)
 acpol.daemon = False
