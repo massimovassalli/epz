@@ -1,7 +1,10 @@
 
 from ..core.cmd import CMD
 from ..core.cmdRec import CMDREC
-
+#REMOVE IT#################################
+from epz.core.epz import ENV
+print(ENV)
+###########################################
 class client(object):
     def __init__(self,device,parameterName):
         self.device = device
