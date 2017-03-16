@@ -94,7 +94,6 @@ class SkelDataRec(epzobject):
             if self._tick == 0:
                 self._actOnValue(data)
                 self._tick = self.notifyLength
-            self.z=[]
 
             if self.notify:
                 self.x.append(data[0])
