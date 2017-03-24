@@ -27,11 +27,10 @@ class FileRec(object):
     def receive(self):
 
         if self.tempThread is not None:
-            if self.tempThread is not None:
-                if self.tempThread.isAlive():
-                    return
-            self.tempThread = Thread(target=client_thread, args=[self.ctx, self.destFile,self.server])
-            self.tempThread.start()
+            if self.tempThread.isAlive():
+                return
+        self.tempThread = Thread(target=client_thread, args=[self.ctx, self.destFile,self.server])
+        self.tempThread.start()
 
 
 
@@ -56,7 +55,7 @@ def client_thread(ctx,destfile, addr=LOCADDR):
 
         chunks += 1
         size = len(chunk)
-        #print('Sloth love Chunk: {0}'.format(chunk))
+        print('Sloth love Chunk: {0}'.format(chunk))
         total += size
         theChunk.write(chunk)
         if size == 0:

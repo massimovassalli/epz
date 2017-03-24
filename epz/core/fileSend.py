@@ -56,6 +56,7 @@ def sender_server(ctx,fileT):
                 datas = data.encode('ascii')
             except:
                 datas = data
+            print('the datas: {0}'.format(datas))
             router.send_multipart([identity, datas])
             if not data:
                 break
