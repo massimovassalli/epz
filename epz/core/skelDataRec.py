@@ -86,8 +86,7 @@ class SkelDataRec(epzobject):
                 self.overload = True
             else:
                 self.overload = False
-
-            if self.save:
+            if self.save and len(self._queue)>=1:
                 self._queue[-1].put(data)
 
             self._tick -= 1

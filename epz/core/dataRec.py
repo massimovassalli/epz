@@ -6,7 +6,7 @@ from .skelDataRec import SkelDataRec
 from threading import Thread
 from .epz import ENV
 
-class dataRec(SkelDataRec, Thread):
+class DataRec(SkelDataRec, Thread):
     def __init__(self,device='ME', tag='TAG', environment=ENV):
         Thread.__init__(self)
         SkelDataRec.__init__(self, device=device, tag=tag, environment=environment)

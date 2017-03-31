@@ -1,7 +1,7 @@
 from ..core.cmd import CMD
 from ..core.cmdRec import CMDREC
 from ..core.data import DATA
-from ..core.dataRec import dataRec
+from ..core.dataRec import DataRec
 
 import threading
 
@@ -24,7 +24,7 @@ class client(object):
         self.pName = parameterName
         self.valueChanged = None
         self.sender = CMD(device=device,tag=self.pName)
-        self.sink = dataRec(device=device,tag=self.pName+'_STREAM')
+        self.sink = DataRec(device=device,tag=self.pName+'_STREAM')
         self.fnamecount = 0
         self.basename = './test'
         self.extension = '.txt'
