@@ -60,3 +60,4 @@ def sender_server(ctx,fileT):
             router.send_multipart([identity, datas])
             if not data:
                 break
+        break
