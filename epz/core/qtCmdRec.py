@@ -14,11 +14,13 @@ except:
 
 class QtCMDREC(SkelCmdRec, QThread):
 
-  respReceived = pyqtSignal(str, name='respReceived')
+    respReceived = pyqtSignal(str, name='respReceived')
 
-  def __init__(self,device='ME', tag='TAG', environment=ENV):
-    QThread.__init__(self)
-    SkelCmdRec.__init__(self, device=device, tag=tag, environment=environment)
+    def __init__(self,device='ME', tag='TAG', environment=ENV):
+        QThread.__init__(self)
+        SkelCmdRec.__init__(self, device=device, tag=tag, environment=environment)
+        self.setCallback(self.emitter)
 
-  def react(self, resp):
-    self.respReceived.emit(resp)
+
+    def emitter(self, cmd,val):
+        self.respReceived.emit(val)
