@@ -37,6 +37,8 @@ class SkelCmdRec(epzobject):
 
   def run(self,oneShot = False):
 
+    print('I am running')
+
     if oneShot:
       body = self._socket.recv_string()
       resp = body[len(self._head):].split(':')[0]
@@ -45,6 +47,8 @@ class SkelCmdRec(epzobject):
       self.listen = True
 
     while self.listen:
+      print('Before body')
       body = self._socket.recv_string()
+      print('body: {0}'.format(body))
       resp = body[len(self._head):]
       self.react(resp)
