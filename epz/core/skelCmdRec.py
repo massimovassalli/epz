@@ -17,6 +17,12 @@ class SkelCmdRec(epzobject):
     self._socket.connect("tcp://{0}:{1}".format(self.epserver, self.subport))
     self._stopit = CMD(device=self.device, tag=self.tag)
 
+  def setTimeout(self,timeOut=0):
+
+    if timeOut > 0:
+      self.timeOut = timeOut
+      self._socket.RCVTIMEO = timeOut
+
   def setCallback(self,callback):
     self._callback = callback
 
@@ -37,8 +43,6 @@ class SkelCmdRec(epzobject):
 
   def run(self,oneShot = False):
 
-    print('I am running')
-
     if oneShot:
       body = self._socket.recv_string()
       resp = body[len(self._head):].split(':')[0]
@@ -47,8 +51,16 @@ class SkelCmdRec(epzobject):
       self.listen = True
 
     while self.listen:
-      print('Before body')
-      body = self._socket.recv_string()
-      print('body: {0}'.format(body))
+      try:
+        body = self._socket.recv_string()
+      except:
+        self.setZMQ()
+        try:
+          if self.timeOut > 0:
+            self.setTimeout(self.timeOut)
+        except:
+          pass
+        continue
+        #body = self._socket.recv_string()
       resp = body[len(self._head):]
       self.react(resp)
