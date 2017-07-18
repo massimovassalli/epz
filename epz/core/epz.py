@@ -23,7 +23,6 @@ class epzobject(object):
     self.epserver = ENV['epserver']
     self.device = device
     self.tag = tag
-    print('epz: {0}'.format(ENV))
     self.setZMQ()
 
   def setZMQ(self):

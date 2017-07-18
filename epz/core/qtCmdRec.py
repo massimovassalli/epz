@@ -16,11 +16,17 @@ class QtCMDREC(SkelCmdRec, QThread):
 
     respReceived = pyqtSignal(str, name='respReceived')
     respReceivedL = pyqtSignal(list,name='respReceivedL')
+    timedOut = pyqtSignal(name='timedOut')
 
     def __init__(self,device='ME', tag='TAG', environment=ENV, emitList=False):
         QThread.__init__(self)
         SkelCmdRec.__init__(self, device=device, tag=tag, environment=environment)
         self.setCallback(self.emitterL if emitList else self.emitter)
+        self.setTimeOutCallback(self.ringAlarm)
+
+
+    def ringAlarm(self):
+        self.timedOut.emit()
 
 
     def emitter(self, cmd,val):

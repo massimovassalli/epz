@@ -11,6 +11,7 @@ class SkelCmdRec(epzobject):
 
   def setZMQ(self):
     self._callback = None
+    self._timeOutCallback = None
     self._head = "{0}:{1}:".format(self.device, self.tag)  #This is the name of the subscribed thread on the EPSERVER
     self._socket = self.context.socket(zmq.SUB)
     self._socket.setsockopt_string(zmq.SUBSCRIBE, self._head)
@@ -25,6 +26,9 @@ class SkelCmdRec(epzobject):
 
   def setCallback(self,callback):
     self._callback = callback
+
+  def setTimeOutCallback(self,callback):
+    self._timeOutCallback = callback
 
   def react(self, resp): #Action to be done when resp is received. This is implementation dependant
     if self._callback is not None:
@@ -57,6 +61,8 @@ class SkelCmdRec(epzobject):
         self.setZMQ()
         try:
           if self.timeOut > 0:
+            print('timedOut epz')
+            self._timeOutCallback()
             self.setTimeout(self.timeOut)
         except:
           pass
