@@ -43,7 +43,7 @@ class SkelLaDataRec(epzobject):
     def notify(self,val):
 
         if not val:
-            self.data = []
+            self._data = []
         self._notify = val
 
 
@@ -89,17 +89,20 @@ class SkelLaDataRec(epzobject):
         while self.listen:
             body = self._socket.recv_string()
             data = [float(x) for x in body[len(self._head):].split(':')] #NB: message is expected to be a list of numbers
+            if len(self._data) != 0:
+                if len(data) != len(self._data):
+                    continue
             if self.act:
                 self._actOnData(data)
 
             if self.notify:
-                if len(self.data) == 0:
-                    self.data = [[]]*len(data)
+                if len(self._data) == 0:
+                    self._data = [[]]*len(data)
                 for i in range(len(data)):
-                    self.data[i].append(data[i])
-                if len(self.data[0]) >= self.chunk:
-                    self._notification(self.data)
-                    self.data = []
+                    self._data[i].append(data[i])
+                if len(self._data[0]) >= self.chunk:
+                    self._notification(self._data)
+                    self._data = []
 
 
     def _notification(self,v):  #notify about a data pack received
