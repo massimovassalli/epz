@@ -83,7 +83,6 @@ class SkelLaDataRec(epzobject):
                 self.act = not self._paused
 
 
-
     def run(self):
         self.listen = True
         while self.listen:

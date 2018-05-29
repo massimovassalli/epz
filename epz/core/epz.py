@@ -17,10 +17,10 @@ def setEnvironment(filename = None):
 class epzobject(object):
 
   def __init__(self, device='ME', tag='TAG', environment=ENV):
-    self.context = ENV['context']
-    self.pubport = ENV['pubport']
-    self.subport = ENV['subport']
-    self.epserver = ENV['epserver']
+    self.context = environment['context']
+    self.pubport = environment['pubport']
+    self.subport = environment['subport']
+    self.epserver = environment['epserver']
     self.device = device
     self.tag = tag
     self.setZMQ()
