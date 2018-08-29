@@ -14,6 +14,7 @@ class SkelLaDataRec(epzobject):
         self._socket = None
         self.listen = True #Set to false to finish receiving
         self.decimate = 1 #if >1 decimate the received data array before sending for management
+        self.actionCount = 0
         self.chunk = 10000 #Size of data to take in memory before transferring to the program
         self._data = []  #DataList
         self._notify = False #Set to true to notify and transfer the data array
@@ -92,7 +93,10 @@ class SkelLaDataRec(epzobject):
                 if len(data) != len(self._data):
                     continue
             if self.act:
-                self._actOnData(data)
+                self.actionCount += 1
+                if self.actionCount == self.decimate:
+                    self._actOnData(data)
+                    self.actionCount = 0
 
             if self.notify:
                 if len(self._data) == 0:
@@ -100,7 +104,7 @@ class SkelLaDataRec(epzobject):
                 for i in range(len(data)):
                     self._data[i].append(data[i])
                 if len(self._data[0]) >= self.chunk:
-                    self._notification(self._data)
+                    self._notification(self._data[::self.decimate])
                     self._data = []
 
 
