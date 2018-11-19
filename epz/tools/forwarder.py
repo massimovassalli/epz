@@ -5,7 +5,12 @@ EpsilonPi Forwarder
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-from core import epz
+try:
+    from ..core import epz
+    REGIME = 'local'
+except:
+    from epz.core import epz
+    REGIME = 'remote'
 
 import zmq
 import threading
