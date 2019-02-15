@@ -49,7 +49,7 @@ class SkelCmdRec(epzobject):
 
     if oneShot:
       body = self._socket.recv_string()
-      resp = body[len(self._head):].split(':')[0]
+      resp = body[len(self._head):].split(':')
       return resp
     else:
       self.listen = True
