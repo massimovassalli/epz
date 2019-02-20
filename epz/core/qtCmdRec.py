@@ -34,4 +34,6 @@ class QtCMDREC(SkelCmdRec, QThread):
 
 
     def emitterL(self,cmd,val):
-        self.respReceivedL.emit([cmd,val])
+        if type(val) != list:
+            val = [val]
+        self.respReceivedL.emit([cmd]+val)
