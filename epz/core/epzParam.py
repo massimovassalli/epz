@@ -55,8 +55,8 @@ class EpzParam(object):
         self.device = device
         self._valueChanged = valuechanged
         self._valueChanging = valuechanging
-        self.pName = paramname
-        self.pLetter = parletter
+        self.pName = str(paramname)
+        self.pLetter = str(parletter)
         self._conversion = conversion
         self._reconvert = reconvert
         self.getName = 'GET_'+self.pName
