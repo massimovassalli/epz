@@ -10,6 +10,7 @@
 
 
 from time import sleep
+from datetime import datetime
 
 from epz.core.cmd import CMD
 from epz.core.cmdRec import CMDREC
@@ -49,9 +50,14 @@ class EpzParam(object):
     # @param readonly Boolean: If True the parameter is read only
     # @param reconvert Object: It can be a float or a callable object. It is used to reconvert the data from the format needed by the epz server
     # @param verbose Boolean: If True enables a series of print that describe the class behaviour
+    # @param execlog Boolean: If True all the class member functions will print their name when called
     def __init__(self,device,paramname,parletter,sendtag=CMDTAG,sendgettag=REQTAG,gettag=RESPTAG,waitToAsk=0.1,
                  waitToGet=WAITFORPARAM,waitCnt=COUNTSFORPARAMS,getRetry=GETRETRY,conversion=1.0,
-                 valuechanged=None,valuechanging=None,readonly=False,reconvert=None,verbose=False):
+                 valuechanged=None,valuechanging=None,readonly=False,reconvert=None,verbose=False,execlog=False):
+
+        if execlog:
+            print('{1}.__init__ called at\t{0}'.format(datetime.now(), type(self).__name__))
+
         self.device = device
         self._valueChanged = valuechanged
         self._valueChanging = valuechanging
@@ -71,15 +77,18 @@ class EpzParam(object):
         self.waitToAsk = waitToAsk
         self.waitCnt = waitCnt
         self.getRetry = getRetry
-        self.stillWaiting = False
+        #self.stillWaiting = False
         self.readOnly = readonly
-        self.verbose = verbose
+        self._verbose = verbose
+        self._execLog = execlog
 
 
     ## It starts the response receiver
     # @param sync Boolean: If True, self.syncValue and self.reSyncher will be called
     # @param fake Boolean: If True the valueChanged function will be set as "print"
     def start(self,sync=True,fake=False):
+        if self._execLog:
+            print('{1}.start called at\t{0}'.format(datetime.now(), type(self).__name__))
         self.receiver.start()
         if fake is True:
             self._valueChanged = print
@@ -90,6 +99,8 @@ class EpzParam(object):
 
     ## Stops the receiver and call syncValue and reSyncher in order to properly stop the Thread
     def stop(self):
+        if self._execLog:
+            print('{1}.stop called at\t{0}'.format(datetime.now(), type(self).__name__))
         self.receiver.listen = False
         self.syncValue()
         self.reSyncher()
@@ -99,19 +110,20 @@ class EpzParam(object):
     # @param cmd String: The letter of the parameter currently returned on the SNDPAR channel. If it's not equal to self.pLetter, the value is ignored
     # @param val String: The value returned by the server
     def setValue(self,cmd,val):
-
-        if self.verbose:
+        if self._execLog:
+            print('{1}.setValue called at\t{0}'.format(datetime.now(), type(self).__name__))
+        if self._verbose:
             print('Letter should be \'{0}\' and is \'{1}\''.format(self.pLetter,cmd))
             print('Value: {0}'.format(val))
-            print('Still waiting? {0}'.format(self.stillWaiting))
+            #print('Still waiting? {0}'.format(self.stillWaiting))
 
         if cmd != self.pLetter:
-            if self.verbose:
+            if self._verbose:
                 print('Letter should be \'{0}\' and is \'{1}\''.format(self.pLetter, cmd))
             return
-        if not self.stillWaiting:
-            return
-        self.stillWaiting = False
+        #if not self.stillWaiting:
+        #    return
+        #self.stillWaiting = False
         if self._reconvert is None:
             if not callable(self._conversion):
                 newvalue = self.type(val)/self._conversion
@@ -123,17 +135,18 @@ class EpzParam(object):
 
         self._value = newvalue
 
-        if self.verbose:
+        if self._verbose:
             print('self._value: {0}'.format(self._value))
 
 
     ## Repeat the syncValue function untill a response is received or untill the maximum number of trials has been reached
     def reSyncher(self):
-
+        if self._execLog:
+            print('{1}.reSyncher called at\t{0}'.format(datetime.now(), type(self).__name__))
         j = 0
         for j in range(self.getRetry):
             cnt = 0
-            while self.stillWaiting and cnt < self.waitCnt:
+            while cnt < self.waitCnt and self._value is None:  # and self.stillWaiting:
                 sleep(self.waitToGet)
                 cnt += 1
             if cnt < self.waitCnt:
@@ -145,13 +158,19 @@ class EpzParam(object):
 
     ## Query the server for the currently stored parameter's value
     def syncValue(self):
-        self.stillWaiting = True
+        if self._execLog:
+            print('{1}.syncValue called at\t{0}'.format(datetime.now(), type(self).__name__))
+        #self.stillWaiting = True
+        if self._verbose:
+            print("syncValue - Sent: {0}".format(self.getName))
         self.getter.send(self.getName)
 
 
     ## Getter for the self.value property
     @property
     def value(self):
+        if self._execLog:
+            print('{1}.value called at\t{0}'.format(datetime.now(), type(self).__name__))
         return self._value
 
 
@@ -159,6 +178,8 @@ class EpzParam(object):
     # @param value Float: The new value to set
     @value.setter
     def value(self, val):
+        if self._execLog:
+            print('{1}.value called at\t{0}'.format(datetime.now(), type(self).__name__))
         if self.readOnly:
             return
         if callable(self._conversion):
@@ -189,7 +210,8 @@ class EpzParam(object):
     ## The self.conversion property getter
     @property
     def conversion(self):
-
+        if self._execLog:
+            print('{1}.conversion called at\t{0}'.format(datetime.now(), type(self).__name__))
         return self._conversion
 
 
@@ -199,7 +221,8 @@ class EpzParam(object):
     # The self._value value is reconverted in order to represent the remotely stored value
     @conversion.setter
     def conversion(self,v):
-
+        if self._execLog:
+            print('{1}.conversion called at\t{0}'.format(datetime.now(), type(self).__name__))
         if v == self._conversion:
             return
 
@@ -217,14 +240,16 @@ class EpzParam(object):
     ## The self.reconvert property getter
     @property
     def reconvert(self):
-
+        if self._execLog:
+            print('{1}.reconvert called at\t{0}'.format(datetime.now(), type(self).__name__))
         return self._reconvert
 
     ## The self.reconvert property setter
     # @param v Object: It can be a Float or a callable object
     @reconvert.setter
     def reconvert(self, v):
-
+        if self._execLog:
+            print('{1}.reconvert called at\t{0}'.format(datetime.now(), type(self).__name__))
         if v == self._reconvert:
             return
 
@@ -240,7 +265,8 @@ class EpzParam(object):
     ## Sets the valueChanged function
     # @param func Callable: A callable object
     def setValueChanged(self,func):
-
+        if self._execLog:
+            print('{1}.setValueChanged called at\t{0}'.format(datetime.now(), type(self).__name__))
         if not callable(func):
             raise Exception('You must specify a callable object')
         self._valueChanged = func
@@ -249,7 +275,8 @@ class EpzParam(object):
     ## Sets the valueChanging function
     # @param func Callable: A callable object
     def setValueChanging(self, func):
-
+        if self._execLog:
+            print('{1}.setValueChanging called at\t{0}'.format(datetime.now(), type(self).__name__))
         if not callable(func):
             raise Exception('You must specify a callable object')
         self._valueChanging = func
