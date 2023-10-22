@@ -22,7 +22,7 @@ import threading
 loop = True
 wait = 0.025
 
-ENV = epz.Environment('test.conf')
+ENV = epz.setEnvironment('test.conf')
 DEVICE = ENV.device
 TIMEBASE = 20
 
